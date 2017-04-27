@@ -1,0 +1,27 @@
+commit 028ebe0760270ba620848c51aff0f73d2ce7d6dc
+Author: Brian 'Redbeard' Harrington <redbeard@dead-city.org>
+Date:   Thu Apr 27 13:01:30 2017 -0700
+
+    build / stage1: Transfer xattr data
+    
+    Currently there is a combination where both xattr data cannot be
+    transferred from a squashfs image to the filesystem combined with the
+    fact that it's not there.  This at least enables the transfer in the
+    future, and silences some of the warnings in the build process.
+    
+    If it is decided that xattrs should not be explicitly transferred in the
+    future this should be changed to -no-xattrs.
+
+diff --git a/stage1/usr_from_coreos/build-usr.mk b/stage1/usr_from_coreos/build-usr.mk
+index 64cf317..cf3c736 100644
+--- a/stage1/usr_from_coreos/build-usr.mk
++++ b/stage1/usr_from_coreos/build-usr.mk
+@@ -169,7 +169,7 @@ $(call generate-stamp-rule,$(CBU_MKBASE_STAMP),$(CCN_SQUASHFS) $(CBU_COMPLETE_MA
+ 		echo -e "Files listed in $(CBU_COMPLETE_MANIFEST) are missing from $(CCN_SQUASHFS):\n$$$$(comm -1 -3 "$(CBU_SQUASHFS_FILES)" "$(CBU_COMPLETE_MANIFEST)")"; \
+ 		exit 1; \
+ 	fi; \
+-	unsquashfs -dest "$(CBU_ROOTFS)/usr" -ef "$(CBU_COMPLETE_MANIFEST)" "$(CCN_SQUASHFS)"$(call vl3, >/dev/null))
++	unsquashfs -user-xattrs -dest "$(CBU_ROOTFS)/usr" -ef "$(CBU_COMPLETE_MANIFEST)" "$(CCN_SQUASHFS)"$(call vl3, >/dev/null))
+ 
+ # If either squashfs file or the concatenated manifest file changes we
+ # need to unpack the squashfs file again. Clean the directory holding

@@ -2,12 +2,16 @@
 %global provider_tld com
 %global project0 rkt
 %global repo0 rkt
+# Definitions to support systemd from source
 %global project1 systemd
 %global repo1 systemd
 
 %global git0 https://%{provider}.%{provider_tld}/%{project0}/%{repo0}
-%global git1 https://%{provider}.%{provider_tld}/%{project1}/%{repo1}
 %global import_path %{provider}.%{provider_tld}/%{project0}/%{repo0}
+
+# Again... More things to support dyamically building a systemd stage1
+# outside of the verison of systemd packaged with Red Hat Enterprise Linux 7
+%global git1 https://%{provider}.%{provider_tld}/%{project1}/%{repo1}
 %global systemd_version 231
 
 # valid values: coreos usr-from-src usr-from-host kvm
@@ -16,7 +20,7 @@
 Name: %{repo0}
 Version: 1.25.0
 Release: 1%{?dist}
-Summary: rkt is a pod-native container engine for Linux
+Summary: A pod-native container engine for Linux
 
 License: ASL 2.0
 URL: %{git0}
@@ -24,7 +28,9 @@ ExclusiveArch: x86_64 aarch64 %{arm} %{ix86}
 # Over time we should validate rkt atop the expanded Go platforms (ppc64le, s390x, etc)
 #ExclusiveArch: %{go_arches}
 Source0: %{git0}/archive/v%{version}/%{name}-%{version}.tar.gz
-Source1: %{git1}/archive/v%{systemd_version}/%{repo1}-%{systemd_version}.tar.gz
+# Once we can use a systemd tarball of the sources to pull this in, we'll add this
+#Source1: %{git1}/archive/v%{systemd_version}/%{repo1}-%{systemd_version}.tar.gz
+Patch0: rkt-make-coreos-stage1-0001.patch
 BuildRequires: autoconf
 BuildRequires: automake
 BuildRequires: bc
@@ -41,9 +47,13 @@ BuildRequires: libmount-devel
 BuildRequires: systemd-devel >= 219
 BuildRequires: perl-Config-Tiny
 BuildRequires: squashfs-tools
-BuildRequires: scl-utils-build
 BuildRequires: wget
-BuildRequires: git19
+# If we wanted to try and build systemd from sources by pulling down from git
+# we would need these.  As of now, I'm just going to suck it up and use the
+# coreos packaged stage1 coming from the PXE image.
+#BuildRequires: scl-utils-build
+#BuildRequires: git19
+
 # Unfortunately, boolean dependencies didn't make it into RPM 4.11
 #BuildRequires: (git >= 1.8.5 or git19 or rh-git29)
 
@@ -62,11 +72,11 @@ Requires: systemd-container
 %{summary}.  It is composable, secure, & built
 on standards.  Some of rkt's key features and goals include:
 
-* Pod-native: rkt's basic unit of execution is a pod, linking together resources
-and user applications in a self-contained environment.
+* Pod-native: rkt's basic unit of execution is a pod, linking together
+resources and user applications in a self-contained environment.
 
-* Security: rkt is developed with a principle of "secure-by-default", and includes
-a number of important security features like support for SELinux, TPM
+* Security: rkt is developed with a principle of "secure-by-default", and
+includes a number of important security features like support for SELinux, TPM
 measurement, and running app containers in hardware-isolated VMs.
 
 * Composability: rkt is designed for first-class integration with init systems
@@ -75,49 +85,52 @@ Nomad), and supports swappable execution engines.
 
 * Open standards and compatibility: rkt implements the appc specification,
 supports the Container Networking Interface specification, and can run Docker
-images and OCI images. Broader native support for OCI images and runtimes is in
-development.
+images and OCI images. Broader native support for OCI images and runtimes is
+in development.
 
 %prep
 ls -l 
 %setup -q -n  %{repo0}-%{version}
+%patch0 -p1
 
 # In the future hopefully we can use this to use locally tar'd systemd sources
 #%setup -q -T -D -a 1
 
 %build
+
 # This is not as elegant as I'd like, but it gets the job done of allowing a
 # user to install git via software collections or use a modern version of the
-# package - rb
-if [ -f /opt/rh/git19/enable ]; then
-	if [ -f /opt/rh/rh-git29/enable ] ; then
-		source /opt/rh/rh-git29/enable
-	else
-		source /opt/rh/git19/enable
-	fi
-fi
-
-if [ -f /opt/rh/rh-git29/enable ] ; then
-	source /opt/rh/rh-git29/enable
-fi
+# package.  Of course, that being said... if we could just use the above
+# mentioned tarball we wouldn't need it at all.  Skipping for now- rb
+#if [ -f /opt/rh/git19/enable ]; then
+#	if [ -f /opt/rh/rh-git29/enable ] ; then
+#		source /opt/rh/rh-git29/enable
+#	else
+#		source /opt/rh/git19/enable
+#	fi
+#fi
+#
+#if [ -f /opt/rh/rh-git29/enable ] ; then
+#	source /opt/rh/rh-git29/enable
+#fi
 	
 ./autogen.sh
 # ./configure flags: https://github.com/coreos/rkt/blob/master/Documentation/build-configure.md
-./configure --with-stage1-flavors=%{stage1_flavors} \
-            --with-stage1-flavors-version-override=%{version}-%{project0} \
-            --with-stage1-default-location=%{_libexecdir}/%{name}/stage1-coreos.aci \
-            --with-stage1-default-images-directory=%{_libexecdir}/%{name} \
-            --enable-tpm=no 
+%configure --with-stage1-flavors=%{stage1_flavors} \
+	--with-stage1-flavors-version-override=%{version}-%{project0} \
+	--with-stage1-default-location=%{_libexecdir}/%{name}/stage1-coreos.aci \
+	--with-stage1-default-images-directory=%{_libexecdir}/%{name} \
+	--enable-tpm=no 
 
-            #--with-stage1-systemd-src=%{_builddir}/%{repo1}-%{systemd_version} \
-            #--with-stage1-systemd-revision=v%{systemd_version} \
-            #--with-stage1-systemd-version=v%{systemd_version} \
+	#--with-stage1-systemd-src=%{_builddir}/%{repo1}-%{systemd_version} \
+	#--with-stage1-systemd-revision=v%{systemd_version} \
+	#--with-stage1-systemd-version=v%{systemd_version} \
 GOPATH=%{gopath}:$(pwd)/Godeps/_workspace make all bash-completion manpages
 gzip dist/manpages/*.1
 
 %install
 # install binaries
-install -dp %{buildroot}{%{_bindir},%{_libexecdir}/%{name},%{_unitdir}}
+install -dp %{buildroot}{%{_bindir},%{_libexecdir}/%{name},%{_unitdir},%{_tmpfilesdir}}
 install -dp %{buildroot}%{_sharedstatedir}/%{name}
 
 install -dp %{buildroot}%{_sysconfdir}/%{name}/trustedkeys/prefix.d
@@ -136,6 +149,7 @@ install -p -m 644 dist/init/systemd/%{name}-gc.timer %{buildroot}%{_unitdir}
 install -p -m 644 dist/init/systemd/%{name}-gc.service %{buildroot}%{_unitdir}
 install -p -m 644 dist/init/systemd/%{name}-metadata.socket %{buildroot}%{_unitdir}
 install -p -m 644 dist/init/systemd/%{name}-metadata.service %{buildroot}%{_unitdir}
+install -p -m 644 dist/init/systemd/tmpfiles.d/%{name}.conf %{buildroot}%{_tmpfilesdir}
 
 # setup of data directories
 install -dp %{buildroot}%{_sharedstatedir}/%{name}/tmp
@@ -201,7 +215,12 @@ exit 0
 %{_bindir}/%{name}
 %{_libexecdir}/%{name}/stage1-*.aci
 %{_unitdir}/%{name}*
+%{_unitdir}/%{name}*
 %{_datadir}/bash-completion/completions/%{name}
+%{_tmpfilesdir}/%{name}.conf
+# I *really* don't like all of these set with the sticky bit, but it is the
+# way the upstream develelopers did all of this:
+# https://github.com/rkt/rkt/blob/ec37f3cb/dist/scripts/setup-data-dir.sh 
 %dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}
 %dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/tmp
 %dir %attr(2770, root, rkt) %{_sharedstatedir}/%{name}/cas
@@ -210,8 +229,8 @@ exit 0
 %dir %attr(2770, root, rkt) %{_sharedstatedir}/%{name}/cas/imageManifest
 %dir %attr(2770, root, rkt) %{_sharedstatedir}/%{name}/cas/blob
 %dir %attr(2770, root, rkt) %{_sharedstatedir}/%{name}/cas/tmp
-%dir %attr(2700, root, rkt) %{_sharedstatedir}/%{name}/cas/tree
-%dir %attr(2700, root, rkt) %{_sharedstatedir}/%{name}/cas/treestorelocks
+%dir %attr(0700, root, rkt) %{_sharedstatedir}/%{name}/cas/tree
+%dir %attr(0700, root, rkt) %{_sharedstatedir}/%{name}/cas/treestorelocks
 %dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/locks
 %dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/pods
 %dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/pods/embryo
@@ -220,9 +239,9 @@ exit 0
 %dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/pods/run
 %dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/pods/exited-garbage
 %dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/pods/garbage
-%dir %config %attr(2775, root, rkt-admin) %{_sysconfdir}/%{name}
-%dir %config %attr(2775, root, rkt-admin) %{_sysconfdir}/%{name}/trustedkeys
-%dir %config %attr(2775, root, rkt-admin) %{_sysconfdir}/%{name}/trustedkeys/prefix.d
+%dir %config %attr(0775, root, rkt-admin) %{_sysconfdir}/%{name}
+%dir %config %attr(0775, root, rkt-admin) %{_sysconfdir}/%{name}/trustedkeys
+%dir %config %attr(0775, root, rkt-admin) %{_sysconfdir}/%{name}/trustedkeys/prefix.d
 
 %attr(0660, root, rkt) %{_sharedstatedir}/%{name}/cas/db/ql.db
 %attr(0660, root, rkt) %{_sharedstatedir}/%{name}/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625
