@@ -66,7 +66,7 @@ Requires(preun): systemd >= 219
 Requires(postun): systemd >= 219
 
 Requires: iptables
-Requires: systemd-container
+#Requires: systemd-container
 
 %description
 %{summary}.  It is composable, secure, & built
@@ -147,6 +147,8 @@ install -p -m 644 dist/bash_completion/%{name}.bash %{buildroot}%{_datadir}/bash
 # install metadata unitfiles
 install -p -m 644 dist/init/systemd/%{name}-gc.timer %{buildroot}%{_unitdir}
 install -p -m 644 dist/init/systemd/%{name}-gc.service %{buildroot}%{_unitdir}
+install -p -m 644 dist/init/systemd/%{name}-api.service %{buildroot}%{_unitdir}
+install -p -m 644 dist/init/systemd/%{name}-api-tcp.socket %{buildroot}%{_unitdir}
 install -p -m 644 dist/init/systemd/%{name}-metadata.socket %{buildroot}%{_unitdir}
 install -p -m 644 dist/init/systemd/%{name}-metadata.service %{buildroot}%{_unitdir}
 install -p -m 644 dist/init/systemd/tmpfiles.d/%{name}.conf %{buildroot}%{_tmpfilesdir}
