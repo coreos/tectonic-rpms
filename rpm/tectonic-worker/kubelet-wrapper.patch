@@ -1,0 +1,20 @@
+diff --git a/kubelet-wrapper b/kubelet-wrapper
+index 2855d8e..c0418f7 100755
+--- a/kubelet-wrapper
++++ b/kubelet-wrapper
+@@ -63,12 +63,12 @@ set -x
+ exec ${RKT} ${RKT_GLOBAL_ARGS} \
+ 	run ${RKT_RUN_ARGS} \
+ 	--volume coreos-etc-kubernetes,kind=host,source=/etc/kubernetes,readOnly=false \
+-	--volume coreos-etc-ssl-certs,kind=host,source=/etc/ssl/certs,readOnly=true \
+-	--volume coreos-usr-share-certs,kind=host,source=/usr/share/ca-certificates,readOnly=true \
++	--volume coreos-etc-ssl-certs,kind=host,source=/etc/pki/tls/certs,readOnly=true \
++	--volume coreos-usr-share-certs,kind=host,source=/etc/pki/CA/certs,readOnly=true \
+ 	--volume coreos-var-lib-docker,kind=host,source=/var/lib/docker,readOnly=false \
+ 	--volume coreos-var-lib-kubelet,kind=host,source=/var/lib/kubelet,readOnly=false,recursive=true \
+ 	--volume coreos-var-log,kind=host,source=/var/log,readOnly=false \
+-	--volume coreos-os-release,kind=host,source=/usr/lib/os-release,readOnly=true \
++	--volume coreos-os-release,kind=host,source=/etc/os-release,readOnly=true \
+ 	--volume coreos-run,kind=host,source=/run,readOnly=false \
+ 	--mount volume=coreos-etc-kubernetes,target=/etc/kubernetes \
+ 	--mount volume=coreos-etc-ssl-certs,target=/etc/ssl/certs \
