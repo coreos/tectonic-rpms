@@ -1,8 +1,19 @@
 diff --git a/kubelet-wrapper b/kubelet-wrapper
-index 2855d8e..c0418f7 100755
+index 2855d8e..c664c19 100755
 --- a/kubelet-wrapper
 +++ b/kubelet-wrapper
-@@ -63,12 +63,12 @@ set -x
+@@ -47,10 +47,6 @@ KUBELET_IMAGE="${KUBELET_IMAGE:-${KUBELET_IMAGE_URL}:${KUBELET_IMAGE_TAG}}"
+ 
+ RKT_RUN_ARGS="${RKT_RUN_ARGS} ${RKT_OPTS}"
+ 
+-if [[ "${KUBELET_IMAGE%%/*}" == "quay.io" ]]; then
+-	RKT_RUN_ARGS="${RKT_RUN_ARGS} --trust-keys-from-https"
+-fi
+-
+ mkdir --parents /etc/kubernetes
+ mkdir --parents /var/lib/docker
+ mkdir --parents /var/lib/kubelet
+@@ -63,12 +59,12 @@ set -x
  exec ${RKT} ${RKT_GLOBAL_ARGS} \
  	run ${RKT_RUN_ARGS} \
  	--volume coreos-etc-kubernetes,kind=host,source=/etc/kubernetes,readOnly=false \
