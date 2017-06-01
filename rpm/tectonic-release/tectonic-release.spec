@@ -20,7 +20,6 @@ Provides:       kubernetes-release(%{version})
 
 BuildArch:      noarch
 Requires:	systemd
-Requires:	rkt
 
 %description
 Tectonic release files including the /etc/tectonic-version file, signing keys
