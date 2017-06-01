@@ -2,7 +2,7 @@
 %define dist_version 1.6.2
 %define bug_version prerelease
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
-%define kubelet_version v1.6.2_coreos.1
+%define kubelet_version v1.6.2_coreos.0
 
 Summary:        A Kubernetes worker configured for Tectonic 
 Name:           tectonic-worker
