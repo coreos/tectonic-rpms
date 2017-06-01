@@ -19,7 +19,7 @@ ExecStartPre=/bin/mkdir -p /etc/kubernetes/inactive-manifests
 ExecStartPre=/bin/mkdir -p /var/lib/cni
 ExecStartPre=/usr/bin/bash -c "grep 'certificate-authority-data' /etc/kubernetes/kubeconfig | awk '{print $2}' | base64 -d > /etc/kubernetes/ca.crt"
 ExecStartPre=-/usr/bin/rkt rm --uuid-file=/var/run/kubelet-pod.uuid
-ExecStartPre=/usr/lib/coreos/kubelet-wrapper-preflight-check.sh
+ExecStartPre=/usr/lib/coreos/kubelet-wrapper-preflight.sh
 ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --kubeconfig=/etc/kubernetes/kubeconfig \
   --require-kubeconfig \
