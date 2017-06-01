@@ -16,6 +16,7 @@ Source1:     	kubelet-env.service
 Source2:     	kubelet.path
 Source3:     	kubelet.service
 Source4:     	wait-for-dns.service
+Source5:     	kubelet-wrapper-preflight.sh
 Patch0:		kubelet-wrapper.patch
 
 Provides:       kubernetes-release
@@ -41,6 +42,7 @@ cp -p %{SOURCE1} .
 cp -p %{SOURCE2} .
 cp -p %{SOURCE3} .
 cp -p %{SOURCE4} .
+cp -p %{SOURCE5} .
 
 %patch0 -p 1
 
@@ -60,6 +62,7 @@ KUBESET-EOF
 install -d %{buildroot}%{_sysconfdir}/kubernetes
 install -d %{buildroot}%{_prefix}/lib/{coreos,systemd/system}
 install -p -m 755 kubelet-wrapper %{buildroot}%{_prefix}/lib/coreos
+install -p -m 755 kubelet-wrapper-preflight.sh %{buildroot}%{_prefix}/lib/coreos
 install -p -m 644 kubelet-env.service %{buildroot}%{_unitdir}
 install -p -m 644 kubelet.path %{buildroot}%{_unitdir}
 install -p -m 644 kubelet.service %{buildroot}%{_unitdir}
@@ -72,6 +75,7 @@ install -p -m 644 kubesettings-local.env %{buildroot}%{_sysconfdir}/kubernetes
 %defattr(-,root,root,-)
 
 %{_prefix}/lib/coreos/kubelet-wrapper
+%{_prefix}/lib/coreos/kubelet-wrapper-preflight.sh
 %{_unitdir}/kubelet-env.service
 %{_unitdir}/kubelet.path
 %{_unitdir}/kubelet.service
