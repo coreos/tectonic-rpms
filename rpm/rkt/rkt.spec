@@ -18,7 +18,7 @@
 %global stage1_flavors coreos,fly
 
 Name: %{repo0}
-Version: 1.25.0
+Version: 1.26.0
 Release: 1%{?dist}
 Summary: A pod-native container engine for Linux
 
@@ -30,7 +30,6 @@ ExclusiveArch: x86_64 aarch64 %{arm} %{ix86}
 Source0: %{git0}/archive/v%{version}/%{name}-%{version}.tar.gz
 # Once we can use a systemd tarball of the sources to pull this in, we'll add this
 #Source1: %{git1}/archive/v%{systemd_version}/%{repo1}-%{systemd_version}.tar.gz
-Patch0: rkt-make-coreos-stage1-0001.patch
 BuildRequires: autoconf
 BuildRequires: automake
 BuildRequires: bc
@@ -91,7 +90,6 @@ in development.
 %prep
 ls -l 
 %setup -q -n  %{repo0}-%{version}
-%patch0 -p1
 
 # In the future hopefully we can use this to use locally tar'd systemd sources
 #%setup -q -T -D -a 1
