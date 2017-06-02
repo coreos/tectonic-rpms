@@ -84,6 +84,10 @@ install -p -m 644 kubesettings-local.env %{buildroot}%{_sysconfdir}/kubernetes
 %{_sysconfdir}/kubernetes/kubesettings-local.env
 
 %changelog
+* Thu Jun 01 2017 Brian 'Redbeard' Harrington 1.6.2-3
+- new package built with tito
+
+- Added a pre-flight check to make things as easy as possible for end users.
 * Tue May 30 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> - 1.6.2-2
 - Pulled in new kubelet wrapper which vendors volume names with coreos-
 
