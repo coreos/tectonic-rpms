@@ -8,7 +8,7 @@ Summary:        A Kubernetes worker configured for Tectonic
 Name:           tectonic-worker
 Version:        %{dist_version}
 Release:        3%{?dist}
-License:        Mixed / ASL 2.0
+License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
 Source0:        https://raw.githubusercontent.com/coreos/coreos-overlay/master/app-admin/kubelet-wrapper/files/kubelet-wrapper

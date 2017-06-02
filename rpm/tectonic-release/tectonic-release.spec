@@ -7,8 +7,8 @@
 Summary:        Tectonic release files and repository configuration
 Name:           tectonic-release
 Version:        %{dist_version}
-Release:        1%{?dist}
-License:        Propreitary
+Release:        3%{?dist}
+License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
 Source0:        mirrors-tectonic
