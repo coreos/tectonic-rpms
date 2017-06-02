@@ -7,7 +7,7 @@
 Summary:        A Kubernetes worker configured for Tectonic 
 Name:           tectonic-worker
 Version:        %{dist_version}
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
@@ -90,6 +90,9 @@ install -p -m 644 INSTALL.md %{buildroot}%{_pkgdocdir}
 %doc %{_pkgdocdir}/INSTALL.md
 
 %changelog
+* Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.4-3
+- "Adding INSTALL.md and conforming to /etc/sysconfig"
+
 * Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.4-2
 - bug: Don't replace kubesettings-local.env on upgrade
   (brian.harrington@coreos.com)
