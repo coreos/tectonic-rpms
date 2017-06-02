@@ -247,6 +247,9 @@ exit 0
 %attr(0660, root, rkt) %{_sharedstatedir}/%{name}/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625
 
 %changelog
+* Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.26.0-1
+- new package built with tito
+
 * Tue Apr 18 2017 Brian 'redbeard' Harrington <redbeard@fedoraproject.org> - 1.25.0-1
 - built commit#ec37f3cb (Tagged 1.25.0)
 
