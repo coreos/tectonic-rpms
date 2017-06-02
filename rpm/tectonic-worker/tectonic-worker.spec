@@ -7,7 +7,7 @@
 Summary:        A Kubernetes worker configured for Tectonic 
 Name:           tectonic-worker
 Version:        %{dist_version}
-Release:        2
+Release:        2%{?dist}
 License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
@@ -17,6 +17,7 @@ Source2:     	kubelet.path
 Source3:     	kubelet.service
 Source4:     	wait-for-dns.service
 Source5:     	kubelet-wrapper-preflight.sh
+Source6:     	INSTALL.md
 Patch0:		kubelet-wrapper.patch
 
 Provides:       kubernetes-release
@@ -43,6 +44,7 @@ cp -p %{SOURCE2} .
 cp -p %{SOURCE3} .
 cp -p %{SOURCE4} .
 cp -p %{SOURCE5} .
+cp -p %{SOURCE6} .
 
 %patch0 -p 1
 
@@ -51,7 +53,7 @@ cp -p %{SOURCE5} .
 	KUBELET_IMAGE_TAG=%{kubelet_version}
 KUBELET-EOF
 
-%{__cat} <<-KUBESET-EOF > kubesettings-local.env
+%{__cat} <<-KUBESET-EOF > tectonic-worker
 	KUBERNETES_DNS_SERVICE_IP=
 	CLUSTER_DOMAIN=cluster.local
 KUBESET-EOF
@@ -59,7 +61,8 @@ KUBESET-EOF
 %build
 
 %install
-install -d %{buildroot}%{_sysconfdir}/kubernetes
+install -d %{buildroot}%{_sysconfdir}/{kubernetes,sysconfig}
+install -d %{buildroot}%{_pkgdocdir}
 install -d %{buildroot}%{_prefix}/lib/{coreos,systemd/system}
 install -p -m 755 kubelet-wrapper %{buildroot}%{_prefix}/lib/coreos
 install -p -m 755 kubelet-wrapper-preflight.sh %{buildroot}%{_prefix}/lib/coreos
@@ -68,7 +71,8 @@ install -p -m 644 kubelet.path %{buildroot}%{_unitdir}
 install -p -m 644 kubelet.service %{buildroot}%{_unitdir}
 install -p -m 644 wait-for-dns.service %{buildroot}%{_unitdir}
 install -p -m 644 kubelet.env %{buildroot}%{_sysconfdir}/kubernetes
-install -p -m 644 kubesettings-local.env %{buildroot}%{_sysconfdir}/kubernetes
+install -p -m 644 tectonic-worker %{buildroot}%{_sysconfdir}/sysconfig
+install -p -m 644 INSTALL.md %{buildroot}%{_pkgdocdir}
 
 
 %files
@@ -80,8 +84,10 @@ install -p -m 644 kubesettings-local.env %{buildroot}%{_sysconfdir}/kubernetes
 %{_unitdir}/kubelet.path
 %{_unitdir}/kubelet.service
 %{_unitdir}/wait-for-dns.service
-%{_sysconfdir}/kubernetes/kubelet.env
-%config(noreplace) %{_sysconfdir}/kubernetes/kubesettings-local.env
+%config %{_sysconfdir}/kubernetes/kubelet.env
+%ghost %config(missingok) %{_sysconfdir}/kubernetes/kubeconfig
+%config(noreplace) %{_sysconfdir}/sysconfig/tectonic-worker
+%doc %{_pkgdocdir}/INSTALL.md
 
 %changelog
 * Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.4-2
