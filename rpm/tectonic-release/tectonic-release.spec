@@ -69,6 +69,10 @@ ln -s tectonic-release %{buildroot}%{_sysconfdir}/kubernetes-release
 %attr(0664,root,rkt-admin) %{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}/%{key_fingerprint}
 
 %changelog
+* Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.2-3
+- fix: tectonic-release does not depend on rkt
+- fix: Incorrect version in specfile
+
 * Thu May 25 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> - 1.6.2-1
 - Packaged Tectonic release 1.6.2-1
 
