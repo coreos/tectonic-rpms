@@ -38,8 +38,8 @@ sed -i 's|@@VERSION@@|%{dist_version}|g' Tectonic-Legal-README.txt
 %{__cat} <<-TECTONIC-EOF > tectonic.repo
 	[tectonic]
 	name=Tectonic distribution of Kubernetes for RHEL \$releasever by CoreOS
-	baseurl=https://yum.repo.coreos.systems/repo/tectonic-rhel/%{dist}/\$basearch/
-	mirrorlist=https://yum-mirrors.repo.coreos.systems/repo/%{dist}/mirrorlist
+	baseurl=https://yum.prod.coreos.systems/repo/tectonic-rhel/%{dist}/\$basearch/
+	mirrorlist=https://yum.prod.coreos.systems/repo/%{dist}/mirrorlist
 	enabled=1
 	gpgcheck=1
 	protect=0
