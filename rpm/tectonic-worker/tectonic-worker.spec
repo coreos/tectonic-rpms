@@ -7,7 +7,7 @@
 Summary:        A Kubernetes worker configured for Tectonic 
 Name:           tectonic-worker
 Version:        %{dist_version}
-Release:        1%{?dist}
+Release:        2
 License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
@@ -84,6 +84,14 @@ install -p -m 644 kubesettings-local.env %{buildroot}%{_sysconfdir}/kubernetes
 %config(noreplace) %{_sysconfdir}/kubernetes/kubesettings-local.env
 
 %changelog
+* Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.4-2
+- bug: Don't replace kubesettings-local.env on upgrade
+  (brian.harrington@coreos.com)
+
+* Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com>
+- bug: Don't replace kubesettings-local.env on upgrade
+  (brian.harrington@coreos.com)
+
 * Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.4-1
 - release: Bumping for Kubernetes version 1.6.4 (brian.harrington@coreos.com)
 
