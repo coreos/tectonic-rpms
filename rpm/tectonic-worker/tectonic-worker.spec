@@ -84,6 +84,9 @@ install -p -m 644 kubesettings-local.env %{buildroot}%{_sysconfdir}/kubernetes
 %{_sysconfdir}/kubernetes/kubesettings-local.env
 
 %changelog
+* Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.4-1
+- release: Bumping for Kubernetes version 1.6.4 (brian.harrington@coreos.com)
+
 * Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.2-3
 - release: Catching up on 1.6.2 release changes 
 - Added a pre-flight check to make things as easy as possible for end users.
