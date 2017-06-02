@@ -8,7 +8,7 @@ KUBELET_ENV="/etc/kubernetes/kubelet.env"
 
 
 errmsg () {
-cat <<-ERRMSG> /dev/stderr
+cat <<-ERRMSG>&2
 	New installs will need to populate the following files:
         ${KUBE_SETTINGS_LOCAL}
         /etc/kubernetes/kubeconfig
@@ -20,7 +20,7 @@ egrep -q "^KUBERNETES_DNS_SERVICE_IP=[[:alnum:].]+" ${KUBE_SETTINGS_LOCAL}
 ecode=$?
 
 if [ $ecode -gt 0 ]; then
-cat <<-DNSERR> /dev/stderr
+cat <<-DNSERR>&2
 	There was a problem validating your DNS service IP in ${KUBE_SETTINGS_LOCAL}
 	Refusing to start
 DNSERR
@@ -32,7 +32,7 @@ egrep -q "^CLUSTER_DOMAIN=[[:alnum:].-]" ${KUBE_SETTINGS_LOCAL}
 ecode=$?
 
 if [ $ecode -gt 0 ]; then
-cat <<-DNSERR> /dev/stderr
+cat <<-DNSERR>&2
 	There was a problem validating your CLUSTER_DOMAIN in ${KUBE_SETTINGS_LOCAL}"
 	Refusing to start"
 DNSERR
