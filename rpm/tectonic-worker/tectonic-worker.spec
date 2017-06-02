@@ -1,13 +1,13 @@
 %define release_name BlackMaple
-%define dist_version 1.6.2
+%define dist_version 1.6.4
 %define bug_version prerelease
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
-%define kubelet_version v1.6.2_coreos.0
+%define kubelet_version v1.6.4_coreos.0
 
 Summary:        A Kubernetes worker configured for Tectonic 
 Name:           tectonic-worker
 Version:        %{dist_version}
-Release:        3%{?dist}
+Release:        1%{?dist}
 License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
@@ -86,27 +86,14 @@ install -p -m 644 kubesettings-local.env %{buildroot}%{_sysconfdir}/kubernetes
 %changelog
 * Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.2-3
 - release: Catching up on 1.6.2 release changes 
-- bug: Preflight used stderr incorrectly 
-- typo: Invalid paths in kubelet.service 
-- Remove TOFU from Quay.io 
-- typo: misspelling of kubelet-wrapper-preflight.sh 
-- rhel/preflight: Adding systemd preflight checks 
-- init/tectonic-worker: Checkin of tectonic-worker 
-
-* Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com>
-- Automatic commit of package [tectonic-worker] release [1.6.2-3]
-- release: Catching up on 1.6.2 release changes 
-- bug: Preflight used stderr incorrectly 
-- typo: Invalid paths in kubelet.service 
-- Remove TOFU from Quay.io 
-- typo: misspelling of kubelet-wrapper-preflight.sh 
-- rhel/preflight: Adding systemd preflight checks 
-- init/tectonic-worker: Checkin of tectonic-worker 
-
-* Thu Jun 01 2017 Brian 'Redbeard' Harrington 1.6.2-3
-- new package built with tito
-
 - Added a pre-flight check to make things as easy as possible for end users.
+- bug: Preflight used stderr incorrectly 
+- typo: Invalid paths in kubelet.service 
+- Remove TOFU from Quay.io 
+- typo: misspelling of kubelet-wrapper-preflight.sh 
+- rhel/preflight: Adding systemd preflight checks 
+- init/tectonic-worker: Checkin of tectonic-worker 
+
 * Tue May 30 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> - 1.6.2-2
 - Pulled in new kubelet wrapper which vendors volume names with coreos-
 
