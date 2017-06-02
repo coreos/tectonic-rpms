@@ -1,0 +1,4 @@
+[buildconfig]
+builder = tito.builder.Builder
+tagger = tito.tagger.ReleaseTagger
+changelog_format = "%s"
