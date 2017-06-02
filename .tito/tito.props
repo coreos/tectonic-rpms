@@ -1,3 +1,4 @@
 [buildconfig]
 builder = tito.builder.NoTgzBuilder
-tagger = tito.tagger.VersionTagger
+tagger = tito.tagger.ReleaseTagger
+changelog_format = "%s"
