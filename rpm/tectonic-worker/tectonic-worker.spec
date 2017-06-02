@@ -84,6 +84,25 @@ install -p -m 644 kubesettings-local.env %{buildroot}%{_sysconfdir}/kubernetes
 %{_sysconfdir}/kubernetes/kubesettings-local.env
 
 %changelog
+* Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.2-3
+- release: Catching up on 1.6.2 release changes 
+- bug: Preflight used stderr incorrectly 
+- typo: Invalid paths in kubelet.service 
+- Remove TOFU from Quay.io 
+- typo: misspelling of kubelet-wrapper-preflight.sh 
+- rhel/preflight: Adding systemd preflight checks 
+- init/tectonic-worker: Checkin of tectonic-worker 
+
+* Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com>
+- Automatic commit of package [tectonic-worker] release [1.6.2-3]
+- release: Catching up on 1.6.2 release changes 
+- bug: Preflight used stderr incorrectly 
+- typo: Invalid paths in kubelet.service 
+- Remove TOFU from Quay.io 
+- typo: misspelling of kubelet-wrapper-preflight.sh 
+- rhel/preflight: Adding systemd preflight checks 
+- init/tectonic-worker: Checkin of tectonic-worker 
+
 * Thu Jun 01 2017 Brian 'Redbeard' Harrington 1.6.2-3
 - new package built with tito
 
