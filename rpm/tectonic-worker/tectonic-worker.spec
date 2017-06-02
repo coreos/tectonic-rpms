@@ -81,7 +81,7 @@ install -p -m 644 kubesettings-local.env %{buildroot}%{_sysconfdir}/kubernetes
 %{_unitdir}/kubelet.service
 %{_unitdir}/wait-for-dns.service
 %{_sysconfdir}/kubernetes/kubelet.env
-%{_sysconfdir}/kubernetes/kubesettings-local.env
+%config(noreplace) %{_sysconfdir}/kubernetes/kubesettings-local.env
 
 %changelog
 * Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.4-1
