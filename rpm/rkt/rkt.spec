@@ -19,7 +19,7 @@
 
 Name: %{repo0}
 Version: 1.26.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A pod-native container engine for Linux
 
 License: ASL 2.0
@@ -246,6 +246,9 @@ exit 0
 %attr(0660, root, rkt) %{_sharedstatedir}/%{name}/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625
 
 %changelog
+* Tue Jun 06 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.26.0-2
+- "rkt: Added support for rkt_image_verify"
+
 * Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.26.0-1
 - new package built with tito
 
