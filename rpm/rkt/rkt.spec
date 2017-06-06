@@ -65,7 +65,6 @@ Requires(preun): systemd >= 219
 Requires(postun): systemd >= 219
 
 Requires: iptables
-#Requires: systemd-container
 
 %description
 %{summary}.  It is composable, secure, & built
@@ -88,7 +87,7 @@ images and OCI images. Broader native support for OCI images and runtimes is
 in development.
 
 %prep
-ls -l 
+
 %setup -q -n  %{repo0}-%{version}
 
 # In the future hopefully we can use this to use locally tar'd systemd sources
@@ -202,6 +201,7 @@ exit 0
 %doc %{_mandir}/man1/rkt_image_list.1.gz
 %doc %{_mandir}/man1/rkt_image_render.1.gz
 %doc %{_mandir}/man1/rkt_image_rm.1.gz
+%doc %{_mandir}/man1/rkt_image_verify.1.gz
 %doc %{_mandir}/man1/rkt_list.1.gz
 %doc %{_mandir}/man1/rkt_metadata-service.1.gz
 %doc %{_mandir}/man1/rkt_prepare.1.gz
@@ -214,7 +214,6 @@ exit 0
 %doc %{_mandir}/man1/rkt_version.1.gz
 %{_bindir}/%{name}
 %{_libexecdir}/%{name}/stage1-*.aci
-%{_unitdir}/%{name}*
 %{_unitdir}/%{name}*
 %{_datadir}/bash-completion/completions/%{name}
 %{_tmpfilesdir}/%{name}.conf
