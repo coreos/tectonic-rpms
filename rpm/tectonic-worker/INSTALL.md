@@ -12,24 +12,51 @@ installation options.
 
 ## Configuring
 
-At runtime, users will need to take two configuration steps:
+At runtime, users will need to take a minimal number of configuration steps:
 
   - Make relevant changes to `/etc/sysconfig/tectonic-worker`
   - Copy the cluster "Kubeconfig" file to the path `/etc/kubernetes/kubeconfig`
+  - Enable and start the service
 
-Both the settings for `tectonic-worker` as well as file `kubeconfig` can be
-found in the assets created by the [tectonic installer][1].  The file
-`kubeconfig` is located in the sub-path `generated/auth/kubeconfig` while the
-DNS settings will be located in the file `terraform.tfvars` under the key name
-`.tectonic_kube_dns_service_ip`.  As a convenience, users with [JQ][2] installed
-can extract this value with the command:
+In some situations users may also need to configure Firewalld.
+
+### Copy the `kubeconfig` file from the Tectonic Installer to the host
+
+The [Tectonic installer][2] generates a `kubeconfig` file which is used by all
+Tectonic workers to authenticate to the API server.  As this file is identical
+on all hosts, it can be retrieved from an existing worker, a node in the
+control plane, or from the assets bundle created by the installer.
+
+To use the `kubeconfig` from the assets bundle, extract the bundle to disk and
+then change to the root directory of the extracted bundle.  The file will be
+located at the path `generated/auth/kubeconfig`.  Copy the file to the worker
+and place it in the path `/etc/kubernetes/kubeconfig`.
+
+### Configure the DNS service address
+
+As a part of the Tectonic system a cluster wide DNS service will be deployed.
+To allow the kubelet to discover the location of other pods and services we will
+need to inform the system of the DNS service address.
+
+The DNS service address can be manually extracted from the file
+`terraform.tfvars` located in the installer assets directory.  It is located
+under the key `tectonic_kube_dns_service_ip`.
+
+As the file `terraform.tfvars` is intended for machine consumption is often
+easier to retrieve this value using the utility [jq][3].  If available, this
+can be done with the command:
 
 ```
-$ jq '.tectonic_kube_dns_service_ip' terraform.tfvars
+$ jq .tectonic_kube_dns_service_ip terraform.tfvars
 ```
+
+Once this value has been retrieved it will be placed in the user managed file
+`/etc/sysconfig/tectonic-worker` on the host in the field `KUBERNETES_DNS_SERVICE_IP=`.
+
+### Configure Firewalld
 
 The default CNI installation for Tectonic utilizes VXLAN for it's communications
-with [flannel][3].  As such, it will need communications between hosts on UDP
+with [flannel][4].  As such, it will need communications between hosts on UDP
 port 4789.  The Kubernetes API will also communicate with hosts on TCP port
 10250.  To simplify the configuration of these options either allow all
 communications between cluster members, place the relevant ethernet interfaces
@@ -45,17 +72,49 @@ $ firewall-cmd --add-port 4789/udp --permanent
 
 Note: These settings may not be all inclusive and will not represent relative
 node ports or other communications which may need to be performed.  For more
-information consult the [relevant Kubernetes documentation][4].
+information consult the [relevant Kubernetes documentation][5].
 
-## SELinux
+### Enable and start the service
+
+This process is the same as with all systemd hosts.  The service as installed by
+the `tectonic-worker` RPM is called `kubelet`.  It can be started with the
+command:
+
+```
+$ systemctl start kubelet.service
+```
+
+It will take a number of minutes for the worker to retrieve the relevant assets
+from Quay.io, bootstrap, and join the cluster.  Progress can be monitored with
+the command:
+
+```
+$ journalctl -u kubelet.service
+```
+
+*NOTE: PolicyKit requires the user to be in a relevant group with access to the
+journal.  By default Red Hat provides the groups `adm` and `systemd-journal` for
+this purpose.  Alternatively the command can be run as the root user*
+
+To ensure the service starts on each boot run the command:
+
+```
+$ systemctl enable kubelet.service
+```
+
+### SELinux
 
 At the present time a policy allowing the Tectonic Worker has not been completed
-and users will have to run SELinux in Permissive mode.  This work may be
-completed in the future.
+and users must run SELinux in Permissive mode.  The ability to run in Enforcing
+mode may be completed in the future.
 
-[1]: https://github.com/coreos/tectonic-installer
-[2]: https://stedolan.github.io/jq/
-[3]: https://github.com/coreos/flannel
-[4]: https://coreos.com/kubernetes/docs/latest/kubernetes-networking.html
+
+## Troubleshooting
+
+[1]: https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/index.html
+[2]: https://github.com/coreos/tectonic-installer
+[3]: https://stedolan.github.io/jq/
+[4]: https://github.com/coreos/flannel
+[5]: https://coreos.com/kubernetes/docs/latest/kubernetes-networking.html
 <!-- vim: ts=2 sw=2 tw=80 expandtab:
 -->
