@@ -9,6 +9,10 @@
 %global git0 https://%{provider}.%{provider_tld}/%{project0}/%{repo0}
 %global import_path %{provider}.%{provider_tld}/%{project0}/%{repo0}
 
+# These values should match those built into this rkt version
+%global coreos_version 1235.0.0
+%global coreos_systemd_version 231
+
 # Again... More things to support dyamically building a systemd stage1
 # outside of the verison of systemd packaged with Red Hat Enterprise Linux 7
 %global git1 https://%{provider}.%{provider_tld}/%{project1}/%{repo1}
@@ -30,6 +34,7 @@ ExclusiveArch: x86_64 aarch64 %{arm} %{ix86}
 Source0: %{git0}/archive/v%{version}/%{name}-%{version}.tar.gz
 # Once we can use a systemd tarball of the sources to pull this in, we'll add this
 #Source1: %{git1}/archive/v%{systemd_version}/%{repo1}-%{systemd_version}.tar.gz
+Source2: https://alpha.release.core-os.net/amd64-usr/%{coreos_version}/coreos_production_pxe_image.cpio.gz#/coreos-%{coreos_version}-amd64-usr.cpio.gz
 BuildRequires: autoconf
 BuildRequires: automake
 BuildRequires: bc
@@ -46,7 +51,6 @@ BuildRequires: libmount-devel
 BuildRequires: systemd-devel >= 219
 BuildRequires: perl-Config-Tiny
 BuildRequires: squashfs-tools
-BuildRequires: wget
 # If we wanted to try and build systemd from sources by pulling down from git
 # we would need these.  As of now, I'm just going to suck it up and use the
 # coreos packaged stage1 coming from the PXE image.
@@ -110,14 +114,18 @@ in development.
 #if [ -f /opt/rh/rh-git29/enable ] ; then
 #	source /opt/rh/rh-git29/enable
 #fi
-	
+
 ./autogen.sh
 # ./configure flags: https://github.com/coreos/rkt/blob/master/Documentation/build-configure.md
-%configure --with-stage1-flavors=%{stage1_flavors} \
+%configure \
+	--with-coreos-local-pxe-image-path=%{SOURCE2} \
+	--with-coreos-local-pxe-image-systemd-version=v%{coreos_systemd_version} \
+	--with-stage1-flavors=%{stage1_flavors} \
 	--with-stage1-flavors-version-override=%{version}-%{project0} \
 	--with-stage1-default-location=%{_libexecdir}/%{name}/stage1-coreos.aci \
 	--with-stage1-default-images-directory=%{_libexecdir}/%{name} \
-	--enable-tpm=no 
+	--disable-tpm \
+	WGET=true  # Bypass this senseless check
 
 	#--with-stage1-systemd-src=%{_builddir}/%{repo1}-%{systemd_version} \
 	#--with-stage1-systemd-revision=v%{systemd_version} \
