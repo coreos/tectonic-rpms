@@ -1,13 +1,13 @@
 %define release_name BlackMaple
-%define dist_version 1.6.4
+%define dist_version 1.6.7
 %define bug_version prerelease
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
-%define kubelet_version v1.6.4_coreos.0
+%define kubelet_version v%{dist_version}_coreos.0
 
 Summary:        A Kubernetes worker configured for Tectonic 
 Name:           tectonic-worker
 Version:        %{dist_version}
-Release:        3%{?dist}
+Release:        1%{?dist}
 License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
