@@ -3,7 +3,7 @@ set +o pipefail
 set +o nounset
 set +o errexit
 
-KUBE_SETTINGS_LOCAL="/etc/kubernetes/kubesettings-local.env"
+KUBE_SETTINGS_LOCAL="/etc/sysconfig/tectonic-worker"
 KUBELET_ENV="/etc/kubernetes/kubelet.env"
 
 
