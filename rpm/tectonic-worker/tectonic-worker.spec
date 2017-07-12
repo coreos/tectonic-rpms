@@ -12,23 +12,21 @@ License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
 Source0:        https://raw.githubusercontent.com/coreos/coreos-overlay/master/app-admin/kubelet-wrapper/files/kubelet-wrapper
-Source1:     	kubelet-env.service
-Source2:     	kubelet.path
-Source3:     	kubelet.service
-Source4:     	wait-for-dns.service
-Source5:     	kubelet-wrapper-preflight.sh
-Source6:     	INSTALL.md
-Patch0:		kubelet-wrapper.patch
-
-Provides:       kubernetes-release
-Provides:       kubernetes-release(%{version})
+Source1:        kubelet.path
+Source2:        kubelet.service
+Source3:        wait-for-dns.service
+Source4:        kubelet-wrapper-preflight.sh
+Source5:        INSTALL.md
+Patch0:         kubelet-wrapper.patch
 
 BuildArch:      noarch
-Requires:	systemd
-Requires:	openssh-server
-Requires:	rkt
-Requires:	docker
-Conflicts:	kubernetes
+Requires:       systemd >= 219
+Requires:       openssh-server
+Requires:       rkt >= 1.25.0
+Requires:       docker >= 1.12.0
+Conflicts:      kubernetes
+Conflicts:      kubernetes-master
+Conflicts:      kubernetes-node
 
 
 %description
@@ -44,7 +42,6 @@ cp -p %{SOURCE2} .
 cp -p %{SOURCE3} .
 cp -p %{SOURCE4} .
 cp -p %{SOURCE5} .
-cp -p %{SOURCE6} .
 
 %patch0 -p 1
 
@@ -66,7 +63,6 @@ install -d %{buildroot}%{_pkgdocdir}
 install -d %{buildroot}%{_prefix}/lib/{coreos,systemd/system}
 install -p -m 755 kubelet-wrapper %{buildroot}%{_prefix}/lib/coreos
 install -p -m 755 kubelet-wrapper-preflight.sh %{buildroot}%{_prefix}/lib/coreos
-install -p -m 644 kubelet-env.service %{buildroot}%{_unitdir}
 install -p -m 644 kubelet.path %{buildroot}%{_unitdir}
 install -p -m 644 kubelet.service %{buildroot}%{_unitdir}
 install -p -m 644 wait-for-dns.service %{buildroot}%{_unitdir}
@@ -80,13 +76,13 @@ install -p -m 644 INSTALL.md %{buildroot}%{_pkgdocdir}
 
 %{_prefix}/lib/coreos/kubelet-wrapper
 %{_prefix}/lib/coreos/kubelet-wrapper-preflight.sh
-%{_unitdir}/kubelet-env.service
 %{_unitdir}/kubelet.path
 %{_unitdir}/kubelet.service
 %{_unitdir}/wait-for-dns.service
 %config %{_sysconfdir}/kubernetes/kubelet.env
 %ghost %config(missingok) %{_sysconfdir}/kubernetes/kubeconfig
-%config(noreplace) %{_sysconfdir}/sysconfig/tectonic-worker
+%ghost %config(missingok) %{_sysconfdir}/kubernetes/kube.version
+%config %{_sysconfdir}/sysconfig/tectonic-worker
 %doc %{_pkgdocdir}/INSTALL.md
 
 %changelog
