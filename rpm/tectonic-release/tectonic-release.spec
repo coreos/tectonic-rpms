@@ -12,14 +12,12 @@ License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
 Source0:        mirrors-tectonic
-Source1:	RPM-GPG-KEY-Tectonic
-Source2:	Tectonic-Legal-README.txt
-Source3:	%{registry_domain}-%{key_fingerprint}
-Provides:       kubernetes-release
-Provides:       kubernetes-release(%{version})
+Source1:        RPM-GPG-KEY-Tectonic
+Source2:        Tectonic-Legal-README.txt
+Source3:        %{registry_domain}-%{key_fingerprint}
 
 BuildArch:      noarch
-Requires:	systemd
+Requires:       systemd >= 219
 
 %description
 Tectonic release files including the /etc/tectonic-version file, signing keys
@@ -38,8 +36,8 @@ sed -i 's|@@VERSION@@|%{dist_version}|g' Tectonic-Legal-README.txt
 %{__cat} <<-TECTONIC-EOF > tectonic.repo
 	[tectonic]
 	name=Tectonic distribution of Kubernetes for RHEL \$releasever by CoreOS
-	baseurl=https://yum.prod.coreos.systems/repo/tectonic-rhel/%{dist}/\$basearch/
-	mirrorlist=https://yum.prod.coreos.systems/repo/%{dist}/mirrorlist
+	baseurl=https://yum.prod.coreos.systems/repo/tectonic-rhel/\$releasever/\$basearch/
+	mirrorlist=https://yum.prod.coreos.systems/repo/\$releasever/mirrorlist
 	enabled=1
 	gpgcheck=1
 	protect=0
