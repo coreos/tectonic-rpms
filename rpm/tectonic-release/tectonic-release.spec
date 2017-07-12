@@ -7,7 +7,7 @@
 Summary:        Tectonic release files and repository configuration
 Name:           tectonic-release
 Version:        %{dist_version}
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
@@ -67,6 +67,9 @@ ln -s tectonic-release %{buildroot}%{_sysconfdir}/kubernetes-release
 %attr(0664,root,rkt-admin) %{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}/%{key_fingerprint}
 
 %changelog
+* Wed Jul 12 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.2-5
+- "bug/yum: dist macro used in place of $releasever"
+
 * Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.2-4
 - Yum repo URL Update (brian.harrington@coreos.com)
 - Automatic commit of package [tectonic-release] release [1.6.2-3].
