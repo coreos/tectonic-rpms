@@ -253,4 +253,5 @@ addFilter("E: non-standard-dir-perm /var/lib/rkt(/.*)? 0?2750L?")
 addFilter("E: non-standard-dir-perm /var/lib/rkt/cas(/.*)? 0?2770L?")
 addFilter("E: non-standard-dir-perm /var/lib/rkt/cas/tree(storelocks)? 0?700L?")
 addFilter("W: hidden-file-or-dir /var/lib/rkt/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625")
+addFilter("W: mixed-use-of-spaces-and-tabs \(spaces: line 7, tab: line (37|4[0-3])")
 #W: only-non-binary-in-usr-lib
