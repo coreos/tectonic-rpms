@@ -26,8 +26,8 @@
 %global stage1_flavors coreos,fly,src
 
 Name: %{repo0}
-Version: 1.26.0
-Release: 2%{?dist}
+Version: 1.27.0
+Release: 1%{?dist}
 Summary: A pod-native container engine for Linux
 
 License: ASL 2.0
