@@ -9,17 +9,25 @@
 %global git0 https://%{provider}.%{provider_tld}/%{project0}/%{repo0}
 %global import_path %{provider}.%{provider_tld}/%{project0}/%{repo0}
 
+# These values should match those built into this rkt version
+%global coreos_version 1235.0.0
+%global coreos_systemd_version 231
+
 # Again... More things to support dyamically building a systemd stage1
 # outside of the verison of systemd packaged with Red Hat Enterprise Linux 7
 %global git1 https://%{provider}.%{provider_tld}/%{project1}/%{repo1}
-%global systemd_version 231
+%if 0%{?fedora}
+%global systemd_version 234
+%else
+%global systemd_version 222
+%endif
 
-# valid values: coreos usr-from-src usr-from-host kvm
-%global stage1_flavors coreos,fly
+# valid values: src coreos host kvm fly
+%global stage1_flavors coreos,fly,src
 
 Name: %{repo0}
-Version: 1.26.0
-Release: 2%{?dist}
+Version: 1.27.0
+Release: 1%{?dist}
 Summary: A pod-native container engine for Linux
 
 License: ASL 2.0
@@ -28,8 +36,9 @@ ExclusiveArch: x86_64 aarch64 %{arm} %{ix86}
 # Over time we should validate rkt atop the expanded Go platforms (ppc64le, s390x, etc)
 #ExclusiveArch: %{go_arches}
 Source0: %{git0}/archive/v%{version}/%{name}-%{version}.tar.gz
-# Once we can use a systemd tarball of the sources to pull this in, we'll add this
-#Source1: %{git1}/archive/v%{systemd_version}/%{repo1}-%{systemd_version}.tar.gz
+Source1: %{git1}/archive/v%{systemd_version}/%{repo1}-%{systemd_version}.tar.gz
+Source2: https://alpha.release.core-os.net/amd64-usr/%{coreos_version}/coreos_production_pxe_image.cpio.gz#/coreos-%{coreos_version}-amd64-usr.cpio.gz
+Patch0: %{name}-%{version}-local-systemd.patch
 BuildRequires: autoconf
 BuildRequires: automake
 BuildRequires: bc
@@ -41,20 +50,12 @@ BuildRequires: intltool
 BuildRequires: libacl-devel
 BuildRequires: libcap-devel
 BuildRequires: libgcrypt-devel
+BuildRequires: libseccomp-devel
 BuildRequires: libtool
 BuildRequires: libmount-devel
 BuildRequires: systemd-devel >= 219
 BuildRequires: perl-Config-Tiny
 BuildRequires: squashfs-tools
-BuildRequires: wget
-# If we wanted to try and build systemd from sources by pulling down from git
-# we would need these.  As of now, I'm just going to suck it up and use the
-# coreos packaged stage1 coming from the PXE image.
-#BuildRequires: scl-utils-build
-#BuildRequires: git19
-
-# Unfortunately, boolean dependencies didn't make it into RPM 4.11
-#BuildRequires: (git >= 1.8.5 or git19 or rh-git29)
 
 # We are not enabling TPM support so skip trousers
 # BuildRequires: trousers-devel
@@ -88,40 +89,27 @@ in development.
 
 %prep
 
-%setup -q -n  %{repo0}-%{version}
+%setup -q -n %{repo0}-%{version}
+%patch0 -p1
 
-# In the future hopefully we can use this to use locally tar'd systemd sources
-#%setup -q -T -D -a 1
+%setup -q -T -D -a 1
 
 %build
 
-# This is not as elegant as I'd like, but it gets the job done of allowing a
-# user to install git via software collections or use a modern version of the
-# package.  Of course, that being said... if we could just use the above
-# mentioned tarball we wouldn't need it at all.  Skipping for now- rb
-#if [ -f /opt/rh/git19/enable ]; then
-#	if [ -f /opt/rh/rh-git29/enable ] ; then
-#		source /opt/rh/rh-git29/enable
-#	else
-#		source /opt/rh/git19/enable
-#	fi
-#fi
-#
-#if [ -f /opt/rh/rh-git29/enable ] ; then
-#	source /opt/rh/rh-git29/enable
-#fi
-	
 ./autogen.sh
 # ./configure flags: https://github.com/coreos/rkt/blob/master/Documentation/build-configure.md
-%configure --with-stage1-flavors=%{stage1_flavors} \
+%configure \
+	--with-coreos-local-pxe-image-path=%{SOURCE2} \
+	--with-coreos-local-pxe-image-systemd-version=v%{coreos_systemd_version} \
+	--with-stage1-flavors=%{stage1_flavors} \
 	--with-stage1-flavors-version-override=%{version}-%{project0} \
 	--with-stage1-default-location=%{_libexecdir}/%{name}/stage1-coreos.aci \
 	--with-stage1-default-images-directory=%{_libexecdir}/%{name} \
-	--enable-tpm=no 
-
-	#--with-stage1-systemd-src=%{_builddir}/%{repo1}-%{systemd_version} \
-	#--with-stage1-systemd-revision=v%{systemd_version} \
-	#--with-stage1-systemd-version=v%{systemd_version} \
+	--disable-tpm \
+	--with-stage1-systemd-src=%{_builddir}/%{repo0}-%{version}/%{repo1}-%{systemd_version} \
+	--with-stage1-systemd-revision=v%{systemd_version} \
+	--with-stage1-systemd-version=v%{systemd_version} \
+	GIT=true WGET=true  # Bypass this senseless check
 GOPATH=%{gopath}:$(pwd)/Godeps/_workspace make all bash-completion manpages
 gzip dist/manpages/*.1
 
