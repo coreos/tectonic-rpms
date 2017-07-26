@@ -234,6 +234,11 @@ exit 0
 %attr(0660, root, rkt) %{_sharedstatedir}/%{name}/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625
 
 %changelog
+* Tue Jul 25 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.27.0-1
+- "rkt: Bump to 1.27.0"
+- "rkt: Build the systemd-from-source stage1"
+- "rkt: Keep the CoreOS PXE image in the SRPM"
+
 * Tue Jun 06 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.26.0-2
 - "rkt: Added support for rkt_image_verify"
 
