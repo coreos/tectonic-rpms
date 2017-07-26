@@ -67,6 +67,9 @@ ln -s tectonic-release %{buildroot}%{_sysconfdir}/kubernetes-release
 %attr(0664,root,rkt-admin) %{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}/%{key_fingerprint}
 
 %changelog
+* Tue Jul 25 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 7-1
+- "nit: Gratuitous version bump for readability"
+
 * Wed Jul 12 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.2-5
 - "bug/yum: dist macro used in place of $releasever"
 
