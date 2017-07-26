@@ -1,5 +1,5 @@
 %define release_name BlackMaple
-%define dist_version 1.6.2
+%define dist_version 7
 %define bug_version prerelease
 %define registry_domain quay.io
 %define key_fingerprint bff313cdaa560b16a8987b8f72abf5f6799d33bc
@@ -7,7 +7,7 @@
 Summary:        Tectonic release files and repository configuration
 Name:           tectonic-release
 Version:        %{dist_version}
-Release:        5%{?dist}
+Release:        1%{?dist}
 License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
@@ -67,6 +67,9 @@ ln -s tectonic-release %{buildroot}%{_sysconfdir}/kubernetes-release
 %attr(0664,root,rkt-admin) %{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}/%{key_fingerprint}
 
 %changelog
+* Tue Jul 25 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 7-1
+- "nit: Gratuitous version bump for readability"
+
 * Wed Jul 12 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.2-5
 - "bug/yum: dist macro used in place of $releasever"
 
