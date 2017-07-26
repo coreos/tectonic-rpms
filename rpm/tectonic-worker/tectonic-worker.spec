@@ -82,7 +82,7 @@ install -p -m 644 INSTALL.md %{buildroot}%{_pkgdocdir}
 %config %{_sysconfdir}/kubernetes/kubelet.env
 %ghost %config(missingok) %{_sysconfdir}/kubernetes/kubeconfig
 %ghost %config(missingok) %{_sysconfdir}/kubernetes/kube.version
-%config %{_sysconfdir}/sysconfig/tectonic-worker
+%config(noreplace) %{_sysconfdir}/sysconfig/tectonic-worker
 %doc %{_pkgdocdir}/INSTALL.md
 
 %changelog
