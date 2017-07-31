@@ -26,7 +26,7 @@
 %global stage1_flavors coreos,fly,src
 
 Name: %{repo0}
-Version: 1.27.0
+Version: 1.28.0
 Release: 1%{?dist}
 Summary: A pod-native container engine for Linux
 
