@@ -37,7 +37,7 @@ from Config import *
 
 # Value for the Distribution tag.
 # Type: string, default: "" (the empty string disables checking)
-setOption("Distribution", "Red Hat")
+#setOption("Distribution", "Red Hat")
 
 # Base directory where to extract uninstalled packages while checking.
 # Type: string, default: tempfile.gettempdir()
@@ -205,7 +205,7 @@ setOption("ValidLicenses", ('ASL 2.0'))
 
 # Value for the Vendor tag.
 # Type: string, default: "" ("" effectively disables this check)
-setOption("Vendor", "CoreOS")
+#setOption("Vendor", "CoreOS")
 
 # Man page warning category, passed to groff -w while checking man pages.
 # See the groff(1) or troff(1) man pages for available categories.
@@ -252,8 +252,11 @@ addFilter("E: non-standard-dir-perm /etc/rkt(/.*)? 0?775L?")
 addFilter("E: non-standard-dir-perm /var/lib/rkt(/.*)? 0?2750L?")
 addFilter("E: non-standard-dir-perm /var/lib/rkt/cas(/.*)? 0?2770L?")
 addFilter("E: non-standard-dir-perm /var/lib/rkt/cas/tree(storelocks)? 0?700L?")
+addFilter("E: non-readable /etc/kubernetes/kube.version 0")
+addFilter("E: non-readable /etc/kubernetes/kubeconfig 0")
 addFilter("E: hardcoded-library-path in %{_prefix}/lib/")
 addFilter("W: hidden-file-or-dir /var/lib/rkt/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625")
-addFilter("tectonic-release.spec:[0-9]*: W: mixed-use-of-spaces-and-tabs \(spaces: line 7, tab: line (37|4[0-3])")
-addFilter("tectonic-worker.spec:[0-9]*: W: mixed-use-of-spaces-and-tabs \(spaces: line 7, tab: line (4[8-9]|5[0-6])")
+addFilter("W: conffile-without-noreplace-flag /etc/kubernetes/kubelet.env")
+addFilter("tectonic-release.(spec|src|noarch):[0-9]*: W: mixed-use-of-spaces-and-tabs \(spaces: line 7, tab: line (37|4[0-3])")
+addFilter("tectonic-worker.(spec|src|noarch):[0-9]*: W: mixed-use-of-spaces-and-tabs \(spaces: line 7, tab: line (4[8-9]|5[0-6])")
 #W: only-non-binary-in-usr-lib
