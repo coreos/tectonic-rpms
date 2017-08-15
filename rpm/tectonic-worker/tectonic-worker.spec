@@ -3,6 +3,9 @@
 %define bug_version prerelease
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
 %define kubelet_version v%{dist_version}_coreos.0
+# The Quay public key to trust
+%define registry_domain quay.io
+%define key_fingerprint bff313cdaa560b16a8987b8f72abf5f6799d33bc
 
 Summary:        A Kubernetes worker configured for Tectonic 
 Name:           tectonic-worker
@@ -17,6 +20,7 @@ Source2:        kubelet.service
 Source3:        wait-for-dns.service
 Source4:        kubelet-wrapper-preflight.sh
 Source5:        INSTALL.md
+Source6:        %{registry_domain}-%{key_fingerprint}
 Patch0:         kubelet-wrapper.patch
 
 BuildArch:      noarch
@@ -70,10 +74,12 @@ install -p -m 644 kubelet.env %{buildroot}%{_sysconfdir}/kubernetes
 install -p -m 644 tectonic-worker %{buildroot}%{_sysconfdir}/sysconfig
 install -p -m 644 INSTALL.md %{buildroot}%{_pkgdocdir}
 
+install -d -m 775 %{buildroot}%{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}
+install -p -m 664 %{SOURCE6} %{buildroot}%{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}/%{key_fingerprint}
+
 
 %files
 %defattr(-,root,root,-)
-
 %{_prefix}/lib/coreos/kubelet-wrapper
 %{_prefix}/lib/coreos/kubelet-wrapper-preflight.sh
 %{_unitdir}/kubelet.path
@@ -83,6 +89,8 @@ install -p -m 644 INSTALL.md %{buildroot}%{_pkgdocdir}
 %ghost %config(missingok) %{_sysconfdir}/kubernetes/kubeconfig
 %ghost %config(missingok) %{_sysconfdir}/kubernetes/kube.version
 %config(noreplace) %{_sysconfdir}/sysconfig/tectonic-worker
+%dir %attr(0775,root,rkt-admin) %{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}
+%config %attr(0664,root,rkt-admin) %{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}/%{key_fingerprint}
 %doc %{_pkgdocdir}/INSTALL.md
 
 %changelog
