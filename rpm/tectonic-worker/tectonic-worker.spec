@@ -14,7 +14,7 @@ Release:        1%{?dist}
 License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
-Source0:        https://raw.githubusercontent.com/coreos/coreos-overlay/master/app-admin/kubelet-wrapper/files/kubelet-wrapper
+Source0:        https://raw.githubusercontent.com/coreos/coreos-overlay/77d54112ae016b3d54f9ed4ade9db07a46db02f7/app-admin/kubelet-wrapper/files/kubelet-wrapper#/coreos-1506.0.0-kubelet-wrapper
 Source1:        kubelet.path
 Source2:        kubelet.service
 Source3:        wait-for-dns.service
@@ -40,7 +40,7 @@ Services for the configuration of a Tectonic Kubernetes worker
 %prep
 
 %setup -cT
-cp -p %{SOURCE0} .
+cp -p %{SOURCE0} kubelet-wrapper
 cp -p %{SOURCE1} .
 cp -p %{SOURCE2} .
 cp -p %{SOURCE3} .
