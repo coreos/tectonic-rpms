@@ -40,6 +40,7 @@ sed -i 's|@@VERSION@@|%{dist_version}|g' Tectonic-Legal-README.txt
 	mirrorlist=https://yum.prod.coreos.systems/repo/\$releasever/mirrorlist
 	enabled=1
 	gpgcheck=1
+	gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Tectonic
 	protect=0
 TECTONIC-EOF
 
