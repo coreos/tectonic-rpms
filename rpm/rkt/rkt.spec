@@ -111,7 +111,6 @@ in development.
 	--with-stage1-systemd-version=v%{systemd_version} \
 	GIT=true WGET=true  # Bypass this senseless check
 GOPATH=%{gopath}:$(pwd)/Godeps/_workspace make all bash-completion manpages
-gzip dist/manpages/*.1
 
 %install
 # install binaries
@@ -120,7 +119,7 @@ install -dp %{buildroot}%{_sharedstatedir}/%{name}
 
 install -dp %{buildroot}%{_sysconfdir}/%{name}/trustedkeys/prefix.d
 install -dp %{buildroot}%{_mandir}/man1
-install -p -m 644 dist/manpages/*.1.gz %{buildroot}%{_mandir}/man1
+install -p -m 644 dist/manpages/*.1 %{buildroot}%{_mandir}/man1
 
 install -p -m 755 build-%{name}-%{version}/target/bin/%{name} %{buildroot}%{_bindir}
 install -p -m 644 build-%{name}-%{version}/target/bin/stage1-*.aci %{buildroot}%{_libexecdir}/%{name}
@@ -148,11 +147,6 @@ touch %{buildroot}%{_sharedstatedir}/%{name}/cas/db/ql.db
 touch %{buildroot}%{_sharedstatedir}/%{name}/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625
 
 
-%check
-
-%clean 
-rm -rf %{buildroot}
-
 %pre
 getent group %{name} > /dev/null 2>&1 || groupadd -r %{name}
 getent group %{name}-admin > /dev/null 2>&1 || groupadd -r %{name}-admin
@@ -173,33 +167,33 @@ exit 0
 %files
 %license LICENSE
 %doc CONTRIBUTING.md DCO README.md Documentation/*
-%doc %{_mandir}/man1/rkt.1.gz
-%doc %{_mandir}/man1/rkt_api-service.1.gz
-%doc %{_mandir}/man1/rkt_cat-manifest.1.gz
-%doc %{_mandir}/man1/rkt_config.1.gz
-%doc %{_mandir}/man1/rkt_enter.1.gz
-%doc %{_mandir}/man1/rkt_export.1.gz
-%doc %{_mandir}/man1/rkt_fetch.1.gz
-%doc %{_mandir}/man1/rkt_gc.1.gz
-%doc %{_mandir}/man1/rkt_image.1.gz
-%doc %{_mandir}/man1/rkt_image_cat-manifest.1.gz
-%doc %{_mandir}/man1/rkt_image_export.1.gz
-%doc %{_mandir}/man1/rkt_image_extract.1.gz
-%doc %{_mandir}/man1/rkt_image_gc.1.gz
-%doc %{_mandir}/man1/rkt_image_list.1.gz
-%doc %{_mandir}/man1/rkt_image_render.1.gz
-%doc %{_mandir}/man1/rkt_image_rm.1.gz
-%doc %{_mandir}/man1/rkt_image_verify.1.gz
-%doc %{_mandir}/man1/rkt_list.1.gz
-%doc %{_mandir}/man1/rkt_metadata-service.1.gz
-%doc %{_mandir}/man1/rkt_prepare.1.gz
-%doc %{_mandir}/man1/rkt_rm.1.gz
-%doc %{_mandir}/man1/rkt_run.1.gz
-%doc %{_mandir}/man1/rkt_run-prepared.1.gz
-%doc %{_mandir}/man1/rkt_status.1.gz
-%doc %{_mandir}/man1/rkt_stop.1.gz
-%doc %{_mandir}/man1/rkt_trust.1.gz
-%doc %{_mandir}/man1/rkt_version.1.gz
+%doc %{_mandir}/man1/rkt.1*
+%doc %{_mandir}/man1/rkt_api-service.1*
+%doc %{_mandir}/man1/rkt_cat-manifest.1*
+%doc %{_mandir}/man1/rkt_config.1*
+%doc %{_mandir}/man1/rkt_enter.1*
+%doc %{_mandir}/man1/rkt_export.1*
+%doc %{_mandir}/man1/rkt_fetch.1*
+%doc %{_mandir}/man1/rkt_gc.1*
+%doc %{_mandir}/man1/rkt_image.1*
+%doc %{_mandir}/man1/rkt_image_cat-manifest.1*
+%doc %{_mandir}/man1/rkt_image_export.1*
+%doc %{_mandir}/man1/rkt_image_extract.1*
+%doc %{_mandir}/man1/rkt_image_gc.1*
+%doc %{_mandir}/man1/rkt_image_list.1*
+%doc %{_mandir}/man1/rkt_image_render.1*
+%doc %{_mandir}/man1/rkt_image_rm.1*
+%doc %{_mandir}/man1/rkt_image_verify.1*
+%doc %{_mandir}/man1/rkt_list.1*
+%doc %{_mandir}/man1/rkt_metadata-service.1*
+%doc %{_mandir}/man1/rkt_prepare.1*
+%doc %{_mandir}/man1/rkt_rm.1*
+%doc %{_mandir}/man1/rkt_run.1*
+%doc %{_mandir}/man1/rkt_run-prepared.1*
+%doc %{_mandir}/man1/rkt_status.1*
+%doc %{_mandir}/man1/rkt_stop.1*
+%doc %{_mandir}/man1/rkt_trust.1*
+%doc %{_mandir}/man1/rkt_version.1*
 %{_bindir}/%{name}
 %{_libexecdir}/%{name}/stage1-*.aci
 %{_unitdir}/%{name}*
