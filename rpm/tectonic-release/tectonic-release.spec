@@ -56,7 +56,7 @@ ln -s tectonic-release %{buildroot}%{_sysconfdir}/kubernetes-release
 %defattr(-,root,root,-)
 %{!?_licensedir:%global license %%doc}
 %license Tectonic-Legal-README.txt
-%config %{_sysconfdir}/yum.repos.d/tectonic.repo
+%config(noreplace) %{_sysconfdir}/yum.repos.d/tectonic.repo
 %config %attr(0644,root,root) %{_sysconfdir}/tectonic-release
 %{_sysconfdir}/kubernetes-release
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-Tectonic
