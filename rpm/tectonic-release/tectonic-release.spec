@@ -62,8 +62,11 @@ ln -s tectonic-release %{buildroot}%{_sysconfdir}/kubernetes-release
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-Tectonic
 
 %changelog
-* Tue Jul 25 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 7-1
-- "nit: Gratuitous version bump for readability"
+* Tue Aug 15 2017 David Michael <david.michael@coreos.com> - 7-1
+- Bump the version to avoid hinting at a relation to the Tectonic version.
+- Define the GPG key path in the repository configuration.
+- Drop the Quay key from this package.
+- Don't override user modifications to the repository configuration.
 
 * Wed Jul 12 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.2-5
 - "bug/yum: dist macro used in place of $releasever"

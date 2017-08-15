@@ -94,6 +94,11 @@ install -p -m 664 %{SOURCE6} %{buildroot}%{_sysconfdir}/rkt/trustedkeys/prefix.d
 %doc %{_pkgdocdir}/INSTALL.md
 
 %changelog
+* Tue Aug 15 2017 David Michael <david.michael@coreos.com> - 1.7.1-1
+- Update to 1.7.1.
+- Trust the Quay key by default in this package instead of tectonic-release.
+- Update the kubelet-wrapper script, and version its source file.
+
 * Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.4-3
 - "Adding INSTALL.md and conforming to /etc/sysconfig"
 

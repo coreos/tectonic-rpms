@@ -228,6 +228,11 @@ exit 0
 %attr(0660, root, rkt) %{_sharedstatedir}/%{name}/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625
 
 %changelog
+* Tue Aug 15 2017 David Michael <david.michael@coreos.com> - 1.28.1-1
+- Update to 1.28.1.
+- Drop unused clean and check sections.
+- Allow the build system to compress man pages.
+
 * Tue Jul 25 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.27.0-1
 - "rkt: Bump to 1.27.0"
 - "rkt: Build the systemd-from-source stage1"
