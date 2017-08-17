@@ -1,8 +1,11 @@
 %define release_name BlackMaple
-%define dist_version 1.6.7
+%define dist_version 1.7.1
 %define bug_version prerelease
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
 %define kubelet_version v%{dist_version}_coreos.0
+# The Quay public key to trust
+%define registry_domain quay.io
+%define key_fingerprint bff313cdaa560b16a8987b8f72abf5f6799d33bc
 
 Summary:        A Kubernetes worker configured for Tectonic 
 Name:           tectonic-worker
@@ -11,12 +14,13 @@ Release:        1%{?dist}
 License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
-Source0:        https://raw.githubusercontent.com/coreos/coreos-overlay/master/app-admin/kubelet-wrapper/files/kubelet-wrapper
+Source0:        https://raw.githubusercontent.com/coreos/coreos-overlay/77d54112ae016b3d54f9ed4ade9db07a46db02f7/app-admin/kubelet-wrapper/files/kubelet-wrapper#/coreos-1506.0.0-kubelet-wrapper
 Source1:        kubelet.path
 Source2:        kubelet.service
 Source3:        wait-for-dns.service
 Source4:        kubelet-wrapper-preflight.sh
 Source5:        INSTALL.md
+Source6:        %{registry_domain}-%{key_fingerprint}
 Patch0:         kubelet-wrapper.patch
 
 BuildArch:      noarch
@@ -36,7 +40,7 @@ Services for the configuration of a Tectonic Kubernetes worker
 %prep
 
 %setup -cT
-cp -p %{SOURCE0} .
+cp -p %{SOURCE0} kubelet-wrapper
 cp -p %{SOURCE1} .
 cp -p %{SOURCE2} .
 cp -p %{SOURCE3} .
@@ -70,10 +74,12 @@ install -p -m 644 kubelet.env %{buildroot}%{_sysconfdir}/kubernetes
 install -p -m 644 tectonic-worker %{buildroot}%{_sysconfdir}/sysconfig
 install -p -m 644 INSTALL.md %{buildroot}%{_pkgdocdir}
 
+install -d -m 775 %{buildroot}%{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}
+install -p -m 664 %{SOURCE6} %{buildroot}%{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}/%{key_fingerprint}
+
 
 %files
 %defattr(-,root,root,-)
-
 %{_prefix}/lib/coreos/kubelet-wrapper
 %{_prefix}/lib/coreos/kubelet-wrapper-preflight.sh
 %{_unitdir}/kubelet.path
@@ -83,9 +89,16 @@ install -p -m 644 INSTALL.md %{buildroot}%{_pkgdocdir}
 %ghost %config(missingok) %{_sysconfdir}/kubernetes/kubeconfig
 %ghost %config(missingok) %{_sysconfdir}/kubernetes/kube.version
 %config(noreplace) %{_sysconfdir}/sysconfig/tectonic-worker
+%dir %attr(0775,root,rkt-admin) %{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}
+%config %attr(0664,root,rkt-admin) %{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}/%{key_fingerprint}
 %doc %{_pkgdocdir}/INSTALL.md
 
 %changelog
+* Tue Aug 15 2017 David Michael <david.michael@coreos.com> - 1.7.1-1
+- Update to 1.7.1.
+- Trust the Quay key by default in this package instead of tectonic-release.
+- Update the kubelet-wrapper script, and version its source file.
+
 * Fri Jun 02 2017 Brian 'redbeard' Harrington <brian.harrington@coreos.com> 1.6.4-3
 - "Adding INSTALL.md and conforming to /etc/sysconfig"
 

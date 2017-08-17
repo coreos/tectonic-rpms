@@ -27,5 +27,5 @@ index 2855d8e..c664c19 100755
 -	--volume coreos-os-release,kind=host,source=/usr/lib/os-release,readOnly=true \
 +	--volume coreos-os-release,kind=host,source=/etc/os-release,readOnly=true \
  	--volume coreos-run,kind=host,source=/run,readOnly=false \
+ 	--volume coreos-lib-modules,kind=host,source=/lib/modules,readOnly=true \
  	--mount volume=coreos-etc-kubernetes,target=/etc/kubernetes \
- 	--mount volume=coreos-etc-ssl-certs,target=/etc/ssl/certs \
