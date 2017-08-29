@@ -1,17 +1,13 @@
 %define release_name BlackMaple
-%define dist_version 7
-%define bug_version prerelease
 
 Summary:        Tectonic release files and repository configuration
 Name:           tectonic-release
-Version:        %{dist_version}
+Version:        7
 Release:        1%{?dist}
 License:        ASL 2.0
 Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
-Source0:        mirrors-tectonic
-Source1:        RPM-GPG-KEY-Tectonic
-Source2:        Tectonic-Legal-README.txt
+Source0:        RPM-GPG-KEY-Tectonic
 
 BuildArch:      noarch
 Requires:       systemd >= 219
@@ -21,13 +17,9 @@ Tectonic release files including the /etc/tectonic-version file, signing keys
 and RPM repository files.
 
 %prep
-
 %setup -cT
-cp -p %{SOURCE0} .
-cp -p %{SOURCE1} .
-cp -p %{SOURCE2} .
+cp -p %{SOURCE0} RPM-GPG-KEY-Tectonic
 chmod -Rf a+rX,u+w,g-w,o-w .
-sed -i 's|@@VERSION@@|%{dist_version}|g' Tectonic-Legal-README.txt
 
 %{__cat} <<-TECTONIC-EOF > tectonic.repo
 	[tectonic]
@@ -46,7 +38,7 @@ TECTONIC-EOF
 install -d %{buildroot}%{_sysconfdir}/{yum.repos.d,pki/rpm-gpg}
 echo "Tectonic release %{version} (%{release_name})" > %{buildroot}%{_sysconfdir}/tectonic-release
 install -p -m 644 tectonic.repo %{buildroot}%{_sysconfdir}/yum.repos.d/
-install -p -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/
+install -p -m 644 RPM-GPG-KEY-Tectonic %{buildroot}%{_sysconfdir}/pki/rpm-gpg/
 
 # Symlink the -release files
 ln -s tectonic-release %{buildroot}%{_sysconfdir}/kubernetes-release
@@ -54,8 +46,6 @@ ln -s tectonic-release %{buildroot}%{_sysconfdir}/kubernetes-release
 
 %files
 %defattr(-,root,root,-)
-%{!?_licensedir:%global license %%doc}
-%license Tectonic-Legal-README.txt
 %config(noreplace) %{_sysconfdir}/yum.repos.d/tectonic.repo
 %config %attr(0644,root,root) %{_sysconfdir}/tectonic-release
 %{_sysconfdir}/kubernetes-release

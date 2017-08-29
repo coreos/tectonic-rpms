@@ -1,6 +1,4 @@
-%define release_name BlackMaple
 %define dist_version 1.7.1
-%define bug_version prerelease
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
 %define kubelet_version v%{dist_version}_coreos.0
 # The Quay public key to trust
