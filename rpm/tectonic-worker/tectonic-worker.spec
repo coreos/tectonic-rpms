@@ -30,6 +30,8 @@ Conflicts:      kubernetes
 Conflicts:      kubernetes-master
 Conflicts:      kubernetes-node
 
+%systemd_requires
+
 
 %description
 Services for the configuration of a Tectonic Kubernetes worker
@@ -74,6 +76,17 @@ install -p -m 644 INSTALL.md %{buildroot}%{_pkgdocdir}
 
 install -d -m 775 %{buildroot}%{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}
 install -p -m 664 %{SOURCE6} %{buildroot}%{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}/%{key_fingerprint}
+
+
+%post
+%systemd_post kubelet.path kubelet.service wait-for-dns.service
+
+%postun
+# Don't restart automatically; let administrators schedule their own downtime.
+%systemd_postun
+
+%preun
+%systemd_preun kubelet.path kubelet.service wait-for-dns.service
 
 
 %files
