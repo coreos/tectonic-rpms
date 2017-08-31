@@ -2,9 +2,9 @@
 
 ## About
 
-This RPM installs the Tectonic Worker components as a part of CoreOS Kubernetes.
+This RPM installs the Tectonic Worker components as part of CoreOS Kubernetes.
 
-The Tectonic Worker is runs atop rkt for it's execution plane.  It utilizes the
+The Tectonic Worker runs atop rkt for its execution plane.  It utilizes the
 monolithic Kubernetes image "hyperkube" to bootstrap itself.  The hyperkube
 image contacts the CoreOS Kubernetes control plane to configure all components.
 These components are dictated by the install and will differ depending on the
@@ -16,13 +16,13 @@ At runtime, users will need to take a minimal number of configuration steps:
 
   - Make relevant changes to `/etc/sysconfig/tectonic-worker`
   - Copy the cluster "Kubeconfig" file to the path `/etc/kubernetes/kubeconfig`
-  - Enable and start the service
+  - Enable and start the `kubelet` service
 
-In some situations users may also need to configure Firewalld.
+In some situations users may also need to configure firewalld.
 
 ### Copy the `kubeconfig` file from the Tectonic Installer to the host
 
-The [Tectonic installer][2] generates a `kubeconfig` file which is used by all
+The [Tectonic Installer][2] generates a `kubeconfig` file which is used by all
 Tectonic workers to authenticate to the API server.  As this file is identical
 on all hosts, it can be retrieved from an existing worker, a node in the
 control plane, or from the assets bundle created by the installer.
@@ -35,8 +35,8 @@ and place it in the path `/etc/kubernetes/kubeconfig`.
 ### Configure the DNS service address
 
 As a part of the Tectonic system a cluster wide DNS service will be deployed.
-To allow the kubelet to discover the location of other pods and services we will
-need to inform the system of the DNS service address.
+To allow the kubelet to discover the location of other pods and services, we
+will need to inform the system of the DNS service address.
 
 The DNS service address can be manually extracted from the file
 `terraform.tfvars` located in the installer assets directory.  It is located
@@ -50,17 +50,18 @@ can be done with the command:
 $ jq .tectonic_kube_dns_service_ip terraform.tfvars
 ```
 
-Once this value has been retrieved it will be placed in the user managed file
-`/etc/sysconfig/tectonic-worker` on the host in the field `KUBERNETES_DNS_SERVICE_IP=`.
+Once this value has been retrieved, it must be defined in the user managed file
+`/etc/sysconfig/tectonic-worker` on the host in the field
+`KUBERNETES_DNS_SERVICE_IP=`.
 
-### Configure Firewalld
+### Configure firewalld
 
-The default CNI installation for Tectonic utilizes VXLAN for it's communications
-with [flannel][4].  As such, it will need communications between hosts on UDP
+The default CNI installation for Tectonic utilizes VXLAN for its communication
+with [flannel][4].  As such, it will need to communicate between hosts on UDP
 port 4789.  The Kubernetes API will also communicate with hosts on TCP port
 10250.  To simplify the configuration of these options either allow all
-communications between cluster members, place the relevant ethernet interfaces
-into the "trusted" zone using FirewallD, or at a minimum allow `4789/udp` and
+communications between cluster members, place the relevant Ethernet interfaces
+into the "trusted" zone using firewalld, or at a minimum allow `4789/udp` and
 `10250/tcp`.  These last steps can be completed with the commands:
 
 ```
@@ -76,7 +77,7 @@ information consult the [relevant Kubernetes documentation][5].
 
 ### Enable and start the service
 
-This process is the same as with all systemd hosts.  The service as installed by
+This process is the same for all systemd hosts.  The service as installed by
 the `tectonic-worker` RPM is called `kubelet`.  It can be started with the
 command:
 
@@ -89,12 +90,12 @@ from Quay.io, bootstrap, and join the cluster.  Progress can be monitored with
 the command:
 
 ```
-$ journalctl -u kubelet.service
+$ journalctl -fu kubelet.service
 ```
 
 *NOTE: PolicyKit requires the user to be in a relevant group with access to the
-journal.  By default Red Hat provides the groups `adm` and `systemd-journal` for
-this purpose.  Alternatively the command can be run as the root user*
+journal.  By default Red Hat provides the groups `adm` and `systemd-journal`
+for this purpose.  Alternatively the command can be run as the root user.*
 
 To ensure the service starts on each boot run the command:
 
@@ -104,10 +105,9 @@ $ systemctl enable kubelet.service
 
 ### SELinux
 
-At the present time a policy allowing the Tectonic Worker has not been completed
-and users must run SELinux in Permissive mode.  The ability to run in Enforcing
-mode may be completed in the future.
-
+At the present time a policy allowing the Tectonic Worker has not been
+completed, and users must run SELinux in Permissive mode.  The ability to run
+in Enforcing mode may be completed in the future.
 
 ## Troubleshooting
 
