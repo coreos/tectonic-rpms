@@ -21,6 +21,7 @@ Source3:        wait-for-dns.service
 Source4:        kubelet-wrapper-preflight.sh
 Source5:        INSTALL.md
 Source6:        %{registry_domain}-%{key_fingerprint}
+Source7:        %{name}-%{version}-LICENSE
 Patch0:         kubelet-wrapper.patch
 
 BuildArch:      noarch
@@ -47,6 +48,7 @@ cp -p %{SOURCE3} .
 cp -p %{SOURCE4} .
 cp -p %{SOURCE5} .
 cp -p %{SOURCE6} quay-key
+cp -p %{SOURCE7} LICENSE
 
 %patch0 -p1
 
@@ -96,6 +98,8 @@ install -pm 0664 quay-key \
 
 
 %files
+%{!?_licensedir:%global license %%doc}
+%license LICENSE
 %{_prefix}/lib/coreos
 %{_unitdir}/kubelet.path
 %{_unitdir}/kubelet.service
