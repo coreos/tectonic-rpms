@@ -14,7 +14,7 @@ Group:          System Environment/Daemons
 License:        ASL 2.0
 URL:            https://coreos.com/tectonic
 
-Source0:        https://raw.githubusercontent.com/coreos/coreos-overlay/77d54112ae016b3d54f9ed4ade9db07a46db02f7/app-admin/kubelet-wrapper/files/kubelet-wrapper#/coreos-1506.0.0-kubelet-wrapper
+Source0:        https://raw.githubusercontent.com/coreos/coreos-overlay/890d98bf42dee5c5878d636a7dc2d42b2c6a9977/app-admin/kubelet-wrapper/files/kubelet-wrapper#/coreos-1520.0.0-kubelet-wrapper
 Source1:        kubelet.path
 Source2:        kubelet.service
 Source3:        wait-for-dns.service
