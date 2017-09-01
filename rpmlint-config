@@ -257,6 +257,4 @@ addFilter("E: non-readable /etc/kubernetes/kubeconfig 0")
 addFilter("E: hardcoded-library-path in %{_prefix}/lib/")
 addFilter("W: hidden-file-or-dir /var/lib/rkt/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625")
 addFilter("W: conffile-without-noreplace-flag /etc/kubernetes/kubelet.env")
-addFilter("tectonic-release.(spec|src|noarch):[0-9]*: W: mixed-use-of-spaces-and-tabs \(spaces: line 7, tab: line (37|4[0-3])")
-addFilter("tectonic-worker.(spec|src|noarch):[0-9]*: W: mixed-use-of-spaces-and-tabs \(spaces: line 7, tab: line (4[8-9]|5[0-6])")
 #W: only-non-binary-in-usr-lib

@@ -52,14 +52,14 @@ cp -p %{SOURCE7} LICENSE
 
 %patch0 -p1
 
-%{__cat} <<- 'KUBELET-EOF' > kubelet.env
-	KUBELET_IMAGE_URL=quay.io/coreos/hyperkube
-	KUBELET_IMAGE_TAG=%{kubelet_version}
+%{__cat} << 'KUBELET-EOF' > kubelet.env
+KUBELET_IMAGE_URL=quay.io/coreos/hyperkube
+KUBELET_IMAGE_TAG=%{kubelet_version}
 KUBELET-EOF
 
-%{__cat} <<- 'KUBESET-EOF' > tectonic-worker
-	KUBERNETES_DNS_SERVICE_IP=
-	CLUSTER_DOMAIN=cluster.local
+%{__cat} << 'KUBESET-EOF' > tectonic-worker
+KUBERNETES_DNS_SERVICE_IP=
+CLUSTER_DOMAIN=cluster.local
 KUBESET-EOF
 
 %build
