@@ -27,7 +27,7 @@
 
 Name:           %{repo0}
 Version:        1.28.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A pod-native container engine for Linux
 
 License:        ASL 2.0
@@ -229,6 +229,9 @@ exit 0
 %attr(0660,root,rkt) %{_sharedstatedir}/%{name}/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625
 
 %changelog
+* Fri Sep 01 2017 David Michael <david.michael@coreos.com> - 1.28.1-2
+- Fetch the systemd stage1 patch from upstream.
+
 * Tue Aug 15 2017 David Michael <david.michael@coreos.com> - 1.28.1-1
 - Update to 1.28.1.
 - Drop unused clean and check sections.

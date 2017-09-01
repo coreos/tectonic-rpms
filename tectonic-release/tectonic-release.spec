@@ -2,7 +2,7 @@
 
 Name:           tectonic-release
 Version:        7
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Tectonic release files and repository configuration
 
 Group:          System Environment/Base
@@ -55,6 +55,10 @@ install -Dpm 0644 RPM-GPG-KEY-Tectonic \
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-Tectonic
 
 %changelog
+* Fri Sep 01 2017 David Michael <david.michael@coreos.com> - 7-2
+- Replace the Tectonic license file with Apache 2.
+- Prefix sources with package name and version to prevent clashing.
+
 * Tue Aug 15 2017 David Michael <david.michael@coreos.com> - 7-1
 - Bump the version to avoid hinting at a relation to the Tectonic version.
 - Define the GPG key path in the repository configuration.

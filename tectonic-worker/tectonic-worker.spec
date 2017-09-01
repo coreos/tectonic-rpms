@@ -114,6 +114,13 @@ install -pm 0664 quay-key \
 %doc INSTALL.md
 
 %changelog
+* Fri Sep 01 2017 David Michael <david.michael@coreos.com> - 1.7.3-1
+- Update to 1.7.3.
+- Take kubelet-wrapper from CoreOS Container Linux 1520.0.0.
+- Include the Apache 2 license file.
+- Run systemd scriptlets, e.g. for automatic daemon-reload on updates.
+- Own the /usr/lib/coreos and /etc/kubernetes directories.
+
 * Tue Aug 15 2017 David Michael <david.michael@coreos.com> - 1.7.1-1
 - Update to 1.7.1.
 - Trust the Quay key by default in this package instead of tectonic-release.
