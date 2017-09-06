@@ -1,26 +1,27 @@
-%define release_name BlackMaple
-%define dist_version 1.7.1
-%define bug_version prerelease
+%define dist_version 1.7.3
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
 %define kubelet_version v%{dist_version}_coreos.0
 # The Quay public key to trust
 %define registry_domain quay.io
 %define key_fingerprint bff313cdaa560b16a8987b8f72abf5f6799d33bc
 
-Summary:        A Kubernetes worker configured for Tectonic 
 Name:           tectonic-worker
 Version:        %{dist_version}
 Release:        1%{?dist}
+Summary:        A Kubernetes worker configured for Tectonic
+
+Group:          System Environment/Daemons
 License:        ASL 2.0
-Group:          System Environment/Base
 URL:            https://coreos.com/tectonic
-Source0:        https://raw.githubusercontent.com/coreos/coreos-overlay/77d54112ae016b3d54f9ed4ade9db07a46db02f7/app-admin/kubelet-wrapper/files/kubelet-wrapper#/coreos-1506.0.0-kubelet-wrapper
+
+Source0:        https://raw.githubusercontent.com/coreos/coreos-overlay/890d98bf42dee5c5878d636a7dc2d42b2c6a9977/app-admin/kubelet-wrapper/files/kubelet-wrapper#/coreos-1520.0.0-kubelet-wrapper
 Source1:        kubelet.path
 Source2:        kubelet.service
 Source3:        wait-for-dns.service
 Source4:        kubelet-wrapper-preflight.sh
 Source5:        INSTALL.md
 Source6:        %{registry_domain}-%{key_fingerprint}
+Source7:        %{name}-%{version}-LICENSE
 Patch0:         kubelet-wrapper.patch
 
 BuildArch:      noarch
@@ -32,13 +33,13 @@ Conflicts:      kubernetes
 Conflicts:      kubernetes-master
 Conflicts:      kubernetes-node
 
+%systemd_requires
 
 %description
 Services for the configuration of a Tectonic Kubernetes worker
 
 
 %prep
-
 %setup -cT
 cp -p %{SOURCE0} kubelet-wrapper
 cp -p %{SOURCE1} .
@@ -46,54 +47,80 @@ cp -p %{SOURCE2} .
 cp -p %{SOURCE3} .
 cp -p %{SOURCE4} .
 cp -p %{SOURCE5} .
+cp -p %{SOURCE6} quay-key
+cp -p %{SOURCE7} LICENSE
 
-%patch0 -p 1
+%patch0 -p1
 
-%{__cat} <<-KUBELET-EOF > kubelet.env
-	KUBELET_IMAGE_URL=quay.io/coreos/hyperkube
-	KUBELET_IMAGE_TAG=%{kubelet_version}
+%{__cat} << 'KUBELET-EOF' > kubelet.env
+KUBELET_IMAGE_URL=quay.io/coreos/hyperkube
+KUBELET_IMAGE_TAG=%{kubelet_version}
 KUBELET-EOF
 
-%{__cat} <<-KUBESET-EOF > tectonic-worker
-	KUBERNETES_DNS_SERVICE_IP=
-	CLUSTER_DOMAIN=cluster.local
+%{__cat} << 'KUBESET-EOF' > tectonic-worker
+KUBERNETES_DNS_SERVICE_IP=
+CLUSTER_DOMAIN=cluster.local
 KUBESET-EOF
 
 %build
 
 %install
-install -d %{buildroot}%{_sysconfdir}/{kubernetes,sysconfig}
-install -d %{buildroot}%{_pkgdocdir}
-install -d %{buildroot}%{_prefix}/lib/{coreos,systemd/system}
-install -p -m 755 kubelet-wrapper %{buildroot}%{_prefix}/lib/coreos
-install -p -m 755 kubelet-wrapper-preflight.sh %{buildroot}%{_prefix}/lib/coreos
-install -p -m 644 kubelet.path %{buildroot}%{_unitdir}
-install -p -m 644 kubelet.service %{buildroot}%{_unitdir}
-install -p -m 644 wait-for-dns.service %{buildroot}%{_unitdir}
-install -p -m 644 kubelet.env %{buildroot}%{_sysconfdir}/kubernetes
-install -p -m 644 tectonic-worker %{buildroot}%{_sysconfdir}/sysconfig
-install -p -m 644 INSTALL.md %{buildroot}%{_pkgdocdir}
+install -dm 0755 %{buildroot}%{_prefix}/lib/coreos
+install -pm 0755 kubelet-wrapper \
+    %{buildroot}%{_prefix}/lib/coreos/kubelet-wrapper
+install -pm 0755 kubelet-wrapper-preflight.sh \
+    %{buildroot}%{_prefix}/lib/coreos/kubelet-wrapper-preflight.sh
 
-install -d -m 775 %{buildroot}%{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}
-install -p -m 664 %{SOURCE6} %{buildroot}%{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}/%{key_fingerprint}
+for unit in kubelet.path kubelet.service wait-for-dns.service
+do install -Dpm 0644 $unit %{buildroot}%{_unitdir}/$unit
+done
+
+install -dm 0755 %{buildroot}%{_sysconfdir}/kubernetes
+install -pm 0644 kubelet.env %{buildroot}%{_sysconfdir}/kubernetes/kubelet.env
+
+install -Dpm 0644 tectonic-worker \
+    %{buildroot}%{_sysconfdir}/sysconfig/tectonic-worker
+
+install -dm 0775 %{buildroot}%{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}
+install -pm 0664 quay-key \
+    %{buildroot}%{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}/%{key_fingerprint}
+
+
+%post
+%systemd_post kubelet.path kubelet.service wait-for-dns.service
+
+%postun
+# Don't restart automatically; let administrators schedule their own downtime.
+%systemd_postun
+
+%preun
+%systemd_preun kubelet.path kubelet.service wait-for-dns.service
 
 
 %files
-%defattr(-,root,root,-)
-%{_prefix}/lib/coreos/kubelet-wrapper
-%{_prefix}/lib/coreos/kubelet-wrapper-preflight.sh
+%{!?_licensedir:%global license %%doc}
+%license LICENSE
+%{_prefix}/lib/coreos
 %{_unitdir}/kubelet.path
 %{_unitdir}/kubelet.service
 %{_unitdir}/wait-for-dns.service
+%dir %{_sysconfdir}/kubernetes
 %config %{_sysconfdir}/kubernetes/kubelet.env
 %ghost %config(missingok) %{_sysconfdir}/kubernetes/kubeconfig
 %ghost %config(missingok) %{_sysconfdir}/kubernetes/kube.version
 %config(noreplace) %{_sysconfdir}/sysconfig/tectonic-worker
 %dir %attr(0775,root,rkt-admin) %{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}
 %config %attr(0664,root,rkt-admin) %{_sysconfdir}/rkt/trustedkeys/prefix.d/%{registry_domain}/%{key_fingerprint}
-%doc %{_pkgdocdir}/INSTALL.md
+%doc INSTALL.md
 
 %changelog
+* Fri Sep 01 2017 David Michael <david.michael@coreos.com> - 1.7.3-1
+- Update to 1.7.3.
+- Take kubelet-wrapper from CoreOS Container Linux 1520.0.0.
+- Include the Apache 2 license file.
+- Run systemd scriptlets, e.g. for automatic daemon-reload on updates.
+- Own the /usr/lib/coreos and /etc/kubernetes directories.
+
 * Tue Aug 15 2017 David Michael <david.michael@coreos.com> - 1.7.1-1
 - Update to 1.7.1.
 - Trust the Quay key by default in this package instead of tectonic-release.

@@ -1,17 +1,17 @@
 %define release_name BlackMaple
-%define dist_version 7
-%define bug_version prerelease
 
-Summary:        Tectonic release files and repository configuration
 Name:           tectonic-release
-Version:        %{dist_version}
-Release:        1%{?dist}
-License:        ASL 2.0
+Version:        7
+Release:        2%{?dist}
+Summary:        Tectonic release files and repository configuration
+
 Group:          System Environment/Base
+License:        ASL 2.0
 URL:            https://coreos.com/tectonic
-Source0:        mirrors-tectonic
-Source1:        RPM-GPG-KEY-Tectonic
-Source2:        Tectonic-Legal-README.txt
+
+Source0:        %{name}-%{version}-RPM-GPG-KEY-Tectonic
+Source1:        %{name}-%{version}-tectonic.repo
+Source2:        %{name}-%{version}-LICENSE
 
 BuildArch:      noarch
 Requires:       systemd >= 219
@@ -21,47 +21,44 @@ Tectonic release files including the /etc/tectonic-version file, signing keys
 and RPM repository files.
 
 %prep
-
 %setup -cT
-cp -p %{SOURCE0} .
-cp -p %{SOURCE1} .
-cp -p %{SOURCE2} .
-chmod -Rf a+rX,u+w,g-w,o-w .
-sed -i 's|@@VERSION@@|%{dist_version}|g' Tectonic-Legal-README.txt
 
-%{__cat} <<-TECTONIC-EOF > tectonic.repo
-	[tectonic]
-	name=Tectonic distribution of Kubernetes for RHEL \$releasever by CoreOS
-	baseurl=https://yum.prod.coreos.systems/repo/tectonic-rhel/\$releasever/\$basearch/
-	mirrorlist=https://yum.prod.coreos.systems/repo/\$releasever/mirrorlist
-	enabled=1
-	gpgcheck=1
-	gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Tectonic
-	protect=0
-TECTONIC-EOF
+for file in %{sources}
+do cp -p "${file}" "${file##*/%{name}-%{version}-}"
+done
+
+echo "Tectonic release %{version} (%{release_name})" > tectonic-release
+touch --reference=tectonic.repo tectonic-release  # timestamp reproducibility
+
+%{_fixperms} .
 
 %build
 
 %install
-install -d %{buildroot}%{_sysconfdir}/{yum.repos.d,pki/rpm-gpg}
-echo "Tectonic release %{version} (%{release_name})" > %{buildroot}%{_sysconfdir}/tectonic-release
-install -p -m 644 tectonic.repo %{buildroot}%{_sysconfdir}/yum.repos.d/
-install -p -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/
+install -Dpm 0644 tectonic-release \
+    %{buildroot}%{_sysconfdir}/tectonic-release
+ln -fns tectonic-release %{buildroot}%{_sysconfdir}/kubernetes-release
 
-# Symlink the -release files
-ln -s tectonic-release %{buildroot}%{_sysconfdir}/kubernetes-release
+install -Dpm 0644 tectonic.repo \
+    %{buildroot}%{_sysconfdir}/yum.repos.d/tectonic.repo
+
+install -Dpm 0644 RPM-GPG-KEY-Tectonic \
+    %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-Tectonic
 
 
 %files
-%defattr(-,root,root,-)
 %{!?_licensedir:%global license %%doc}
-%license Tectonic-Legal-README.txt
+%license LICENSE
 %config(noreplace) %{_sysconfdir}/yum.repos.d/tectonic.repo
-%config %attr(0644,root,root) %{_sysconfdir}/tectonic-release
+%config %{_sysconfdir}/tectonic-release
 %{_sysconfdir}/kubernetes-release
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-Tectonic
 
 %changelog
+* Fri Sep 01 2017 David Michael <david.michael@coreos.com> - 7-2
+- Replace the Tectonic license file with Apache 2.
+- Prefix sources with package name and version to prevent clashing.
+
 * Tue Aug 15 2017 David Michael <david.michael@coreos.com> - 7-1
 - Bump the version to avoid hinting at a relation to the Tectonic version.
 - Define the GPG key path in the repository configuration.

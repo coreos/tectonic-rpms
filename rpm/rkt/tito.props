@@ -1,8 +1,0 @@
-[buildconfig]
-builder = tito.builder.FetchBuilder
-builder.mock = rhel-7-x86_64
-tagger = tito.tagger.ReleaseTagger
-changelog_format = "%s"
-
-[builder]
-fetch_strategy = tito.builder.fetch.ArgSourceStrategy

@@ -25,47 +25,50 @@
 # valid values: src coreos host kvm fly
 %global stage1_flavors coreos,fly,src
 
-Name: %{repo0}
-Version: 1.28.1
-Release: 1%{?dist}
-Summary: A pod-native container engine for Linux
+Name:           %{repo0}
+Version:        1.28.1
+Release:        2%{?dist}
+Summary:        A pod-native container engine for Linux
 
-License: ASL 2.0
-URL: %{git0}
-ExclusiveArch: x86_64 aarch64 %{arm} %{ix86}
+License:        ASL 2.0
+URL:            %{git0}
+
+ExclusiveArch:  x86_64 aarch64 %{arm} %{ix86}
 # Over time we should validate rkt atop the expanded Go platforms (ppc64le, s390x, etc)
-#ExclusiveArch: %{go_arches}
-Source0: %{git0}/archive/v%{version}/%{name}-%{version}.tar.gz
-Source1: %{git1}/archive/v%{systemd_version}/%{repo1}-%{systemd_version}.tar.gz
-Source2: https://alpha.release.core-os.net/amd64-usr/%{coreos_version}/coreos_production_pxe_image.cpio.gz#/coreos-%{coreos_version}-amd64-usr.cpio.gz
-Patch0: %{name}-%{version}-local-systemd.patch
-BuildRequires: autoconf
-BuildRequires: automake
-BuildRequires: bc
-BuildRequires: glibc-static
-BuildRequires: golang >= 1.6
-BuildRequires: gperf
-BuildRequires: gnupg
-BuildRequires: intltool
-BuildRequires: libacl-devel
-BuildRequires: libcap-devel
-BuildRequires: libgcrypt-devel
-BuildRequires: libseccomp-devel
-BuildRequires: libtool
-BuildRequires: libmount-devel
-BuildRequires: systemd-devel >= 219
-BuildRequires: perl-Config-Tiny
-BuildRequires: squashfs-tools
+#ExclusiveArch:  %%{go_arches}
+
+Source0:        %{git0}/archive/v%{version}/%{name}-%{version}.tar.gz
+Source1:        %{git1}/archive/v%{systemd_version}/%{repo1}-%{systemd_version}.tar.gz
+Source2:        https://alpha.release.core-os.net/amd64-usr/%{coreos_version}/coreos_production_pxe_image.cpio.gz#/coreos-%{coreos_version}-amd64-usr.cpio.gz
+Patch0:         https://github.com/rkt/rkt/commit/1179771b093a668fef65beaa8c23bb7000430129.patch#/%{name}-%{version}-local-systemd.patch
+
+BuildRequires:  autoconf
+BuildRequires:  automake
+BuildRequires:  bc
+BuildRequires:  glibc-static
+BuildRequires:  golang >= 1.6
+BuildRequires:  gperf
+BuildRequires:  gnupg
+BuildRequires:  intltool
+BuildRequires:  libacl-devel
+BuildRequires:  libcap-devel
+BuildRequires:  libgcrypt-devel
+BuildRequires:  libseccomp-devel
+BuildRequires:  libtool
+BuildRequires:  libmount-devel
+BuildRequires:  systemd-devel >= 219
+BuildRequires:  perl-Config-Tiny
+BuildRequires:  squashfs-tools
 
 # We are not enabling TPM support so skip trousers
-# BuildRequires: trousers-devel
+#BuildRequires:  trousers-devel
 
-Requires(pre): shadow-utils
+Requires(pre):  shadow-utils
 Requires(post): systemd >= 219
 Requires(preun): systemd >= 219
 Requires(postun): systemd >= 219
 
-Requires: iptables
+Requires:       iptables
 
 %description
 %{summary}.  It is composable, secure, & built
@@ -87,30 +90,29 @@ supports the Container Networking Interface specification, and can run Docker
 images and OCI images. Broader native support for OCI images and runtimes is
 in development.
 
-%prep
 
+%prep
 %setup -q -n %{repo0}-%{version}
 %patch0 -p1
 
 %setup -q -T -D -a 1
 
 %build
-
 ./autogen.sh
 # ./configure flags: https://github.com/coreos/rkt/blob/master/Documentation/build-configure.md
 %configure \
-	--with-coreos-local-pxe-image-path=%{SOURCE2} \
-	--with-coreos-local-pxe-image-systemd-version=v%{coreos_systemd_version} \
-	--with-stage1-flavors=%{stage1_flavors} \
-	--with-stage1-flavors-version-override=%{version}-%{project0} \
-	--with-stage1-default-location=%{_libexecdir}/%{name}/stage1-coreos.aci \
-	--with-stage1-default-images-directory=%{_libexecdir}/%{name} \
-	--disable-tpm \
-	--with-stage1-systemd-src=%{_builddir}/%{repo0}-%{version}/%{repo1}-%{systemd_version} \
-	--with-stage1-systemd-revision=v%{systemd_version} \
-	--with-stage1-systemd-version=v%{systemd_version} \
-	GIT=true WGET=true  # Bypass this senseless check
-GOPATH=%{gopath}:$(pwd)/Godeps/_workspace make all bash-completion manpages
+    --with-coreos-local-pxe-image-path=%{SOURCE2} \
+    --with-coreos-local-pxe-image-systemd-version=v%{coreos_systemd_version} \
+    --with-stage1-flavors=%{stage1_flavors} \
+    --with-stage1-flavors-version-override=%{version}-%{project0} \
+    --with-stage1-default-location=%{_libexecdir}/%{name}/stage1-coreos.aci \
+    --with-stage1-default-images-directory=%{_libexecdir}/%{name} \
+    --disable-tpm \
+    --with-stage1-systemd-src=%{_builddir}/%{repo0}-%{version}/%{repo1}-%{systemd_version} \
+    --with-stage1-systemd-revision=v%{systemd_version} \
+    --with-stage1-systemd-version=v%{systemd_version} \
+    GIT=true WGET=true  # Bypass this senseless check
+%make_build all bash-completion manpages
 
 %install
 # install binaries
@@ -147,24 +149,23 @@ touch %{buildroot}%{_sharedstatedir}/%{name}/cas/db/ql.db
 touch %{buildroot}%{_sharedstatedir}/%{name}/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625
 
 
+%post
+%systemd_post %{name}-metadata.service
+
+%postun
+%systemd_postun_with_restart %{name}-metadata.service
+
 %pre
 getent group %{name} > /dev/null 2>&1 || groupadd -r %{name}
 getent group %{name}-admin > /dev/null 2>&1 || groupadd -r %{name}-admin
 exit 0
 
-%post
-%systemd_post %{name}-metadata.service
-
 %preun
 %systemd_preun %{name}-metadata.service
 
-%postun
-%systemd_postun_with_restart %{name}-metadata.service
-
-#define license tag if not already defined
-%{!?_licensedir:%global license %doc}
 
 %files
+%{!?_licensedir:%global license %%doc}
 %license LICENSE
 %doc CONTRIBUTING.md DCO README.md Documentation/*
 %doc %{_mandir}/man1/rkt.1*
@@ -202,32 +203,35 @@ exit 0
 # I *really* don't like all of these set with the sticky bit, but it is the
 # way the upstream develelopers did all of this:
 # https://github.com/rkt/rkt/blob/ec37f3cb/dist/scripts/setup-data-dir.sh 
-%dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}
-%dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/tmp
-%dir %attr(2770, root, rkt) %{_sharedstatedir}/%{name}/cas
-%dir %attr(2770, root, rkt) %{_sharedstatedir}/%{name}/cas/db
-%dir %attr(2770, root, rkt) %{_sharedstatedir}/%{name}/cas/imagelocks
-%dir %attr(2770, root, rkt) %{_sharedstatedir}/%{name}/cas/imageManifest
-%dir %attr(2770, root, rkt) %{_sharedstatedir}/%{name}/cas/blob
-%dir %attr(2770, root, rkt) %{_sharedstatedir}/%{name}/cas/tmp
-%dir %attr(0700, root, rkt) %{_sharedstatedir}/%{name}/cas/tree
-%dir %attr(0700, root, rkt) %{_sharedstatedir}/%{name}/cas/treestorelocks
-%dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/locks
-%dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/pods
-%dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/pods/embryo
-%dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/pods/prepare
-%dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/pods/prepared
-%dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/pods/run
-%dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/pods/exited-garbage
-%dir %attr(2750, root, rkt) %{_sharedstatedir}/%{name}/pods/garbage
-%dir %config %attr(0775, root, rkt-admin) %{_sysconfdir}/%{name}
-%dir %config %attr(0775, root, rkt-admin) %{_sysconfdir}/%{name}/trustedkeys
-%dir %config %attr(0775, root, rkt-admin) %{_sysconfdir}/%{name}/trustedkeys/prefix.d
+%dir %attr(2750,root,rkt) %{_sharedstatedir}/%{name}
+%dir %attr(2750,root,rkt) %{_sharedstatedir}/%{name}/tmp
+%dir %attr(2770,root,rkt) %{_sharedstatedir}/%{name}/cas
+%dir %attr(2770,root,rkt) %{_sharedstatedir}/%{name}/cas/db
+%dir %attr(2770,root,rkt) %{_sharedstatedir}/%{name}/cas/imagelocks
+%dir %attr(2770,root,rkt) %{_sharedstatedir}/%{name}/cas/imageManifest
+%dir %attr(2770,root,rkt) %{_sharedstatedir}/%{name}/cas/blob
+%dir %attr(2770,root,rkt) %{_sharedstatedir}/%{name}/cas/tmp
+%dir %attr(0700,root,rkt) %{_sharedstatedir}/%{name}/cas/tree
+%dir %attr(0700,root,rkt) %{_sharedstatedir}/%{name}/cas/treestorelocks
+%dir %attr(2750,root,rkt) %{_sharedstatedir}/%{name}/locks
+%dir %attr(2750,root,rkt) %{_sharedstatedir}/%{name}/pods
+%dir %attr(2750,root,rkt) %{_sharedstatedir}/%{name}/pods/embryo
+%dir %attr(2750,root,rkt) %{_sharedstatedir}/%{name}/pods/prepare
+%dir %attr(2750,root,rkt) %{_sharedstatedir}/%{name}/pods/prepared
+%dir %attr(2750,root,rkt) %{_sharedstatedir}/%{name}/pods/run
+%dir %attr(2750,root,rkt) %{_sharedstatedir}/%{name}/pods/exited-garbage
+%dir %attr(2750,root,rkt) %{_sharedstatedir}/%{name}/pods/garbage
+%dir %config %attr(0775,root,rkt-admin) %{_sysconfdir}/%{name}
+%dir %config %attr(0775,root,rkt-admin) %{_sysconfdir}/%{name}/trustedkeys
+%dir %config %attr(0775,root,rkt-admin) %{_sysconfdir}/%{name}/trustedkeys/prefix.d
 
-%attr(0660, root, rkt) %{_sharedstatedir}/%{name}/cas/db/ql.db
-%attr(0660, root, rkt) %{_sharedstatedir}/%{name}/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625
+%attr(0660,root,rkt) %{_sharedstatedir}/%{name}/cas/db/ql.db
+%attr(0660,root,rkt) %{_sharedstatedir}/%{name}/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625
 
 %changelog
+* Fri Sep 01 2017 David Michael <david.michael@coreos.com> - 1.28.1-2
+- Fetch the systemd stage1 patch from upstream.
+
 * Tue Aug 15 2017 David Michael <david.michael@coreos.com> - 1.28.1-1
 - Update to 1.28.1.
 - Drop unused clean and check sections.

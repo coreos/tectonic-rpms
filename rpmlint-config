@@ -244,7 +244,6 @@ setOption("ValidLicenses", ('ASL 2.0'))
 # Output filters.
 # ---------------
 
-#addFilter("E: .* no-signature")
 addFilter("E: zero-length /var/lib/rkt/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625")
 addFilter("E: zero-length /var/lib/rkt/cas/db/ql.db")
 addFilter("E: non-readable /var/lib/rkt/cas/db(/.*)? 0?660L?")
@@ -256,7 +255,18 @@ addFilter("E: non-readable /etc/kubernetes/kube.version 0")
 addFilter("E: non-readable /etc/kubernetes/kubeconfig 0")
 addFilter("E: hardcoded-library-path in %{_prefix}/lib/")
 addFilter("W: hidden-file-or-dir /var/lib/rkt/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625")
+addFilter("W: conffile-without-noreplace-flag /etc/kubernetes/kube.version")
+addFilter("W: conffile-without-noreplace-flag /etc/kubernetes/kubeconfig")
 addFilter("W: conffile-without-noreplace-flag /etc/kubernetes/kubelet.env")
-addFilter("tectonic-release.(spec|src|noarch):[0-9]*: W: mixed-use-of-spaces-and-tabs \(spaces: line 7, tab: line (37|4[0-3])")
-addFilter("tectonic-worker.(spec|src|noarch):[0-9]*: W: mixed-use-of-spaces-and-tabs \(spaces: line 7, tab: line (4[8-9]|5[0-6])")
-#W: only-non-binary-in-usr-lib
+
+# The other /etc/*-release files do not use noreplace either.
+addFilter("tectonic-release.noarch: W: conffile-without-noreplace-flag /etc/tectonic-release")
+
+# There is no documentation in fedora-release.
+addFilter("tectonic-release.noarch: W: no-documentation")
+
+# The other RPM GPG keys are not marked as configuration files either.
+addFilter("tectonic-release.noarch: W: non-conffile-in-etc /etc/pki/rpm-gpg/RPM-GPG-KEY-Tectonic")
+
+# The Quay key is named after its fingerprint.  It shouldn't be modified.
+addFilter("tectonic-worker.noarch: W: conffile-without-noreplace-flag /etc/rkt/trustedkeys/prefix.d/quay.io/bff313cdaa560b16a8987b8f72abf5f6799d33bc")

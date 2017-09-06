@@ -1,0 +1,8 @@
+[tectonic]
+name=Tectonic distribution of Kubernetes for RHEL $releasever by CoreOS
+baseurl=https://yum.prod.coreos.systems/repo/tectonic-rhel/$releasever/$basearch/
+mirrorlist=https://yum.prod.coreos.systems/repo/$releasever/mirrorlist
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Tectonic
+protect=0
