@@ -27,7 +27,7 @@ Patch0:         kubelet-wrapper.patch
 BuildArch:      noarch
 Requires:       systemd >= 219
 Requires:       openssh-server
-Requires:       rkt >= 1.25.0
+Requires:       rkt >= 1.28.1
 Requires:       docker >= 1.12.0
 Conflicts:      kubernetes
 Conflicts:      kubernetes-master
