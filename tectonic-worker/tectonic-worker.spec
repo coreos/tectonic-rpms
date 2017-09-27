@@ -1,4 +1,4 @@
-%define dist_version 1.7.3
+%define dist_version 1.7.5
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
 %define kubelet_version v%{dist_version}_coreos.0
 # The Quay public key to trust
@@ -27,7 +27,7 @@ Patch0:         kubelet-wrapper.patch
 BuildArch:      noarch
 Requires:       systemd >= 219
 Requires:       openssh-server
-Requires:       rkt >= 1.25.0
+Requires:       rkt >= 1.28.1
 Requires:       docker >= 1.12.0
 Conflicts:      kubernetes
 Conflicts:      kubernetes-master
@@ -114,6 +114,10 @@ install -pm 0664 quay-key \
 %doc INSTALL.md
 
 %changelog
+* Tue Sep 26 2017 David Michael <david.michael@coreos.com> - 1.7.5-1
+- Update to 1.7.5.
+- Require at least rkt 1.28.1 (current latest).
+
 * Fri Sep 01 2017 David Michael <david.michael@coreos.com> - 1.7.3-1
 - Update to 1.7.3.
 - Take kubelet-wrapper from CoreOS Container Linux 1520.0.0.
