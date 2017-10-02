@@ -1,6 +1,6 @@
 %define dist_version 1.7.5
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
-%define kubelet_version v%{dist_version}_coreos.0
+%define kubelet_version v%{dist_version}_coreos.1
 # The Quay public key to trust
 %define registry_domain quay.io
 %define key_fingerprint bff313cdaa560b16a8987b8f72abf5f6799d33bc
