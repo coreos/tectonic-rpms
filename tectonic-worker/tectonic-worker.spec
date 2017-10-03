@@ -1,6 +1,6 @@
 %define dist_version 1.7.5
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
-%define kubelet_version v%{dist_version}_coreos.0
+%define kubelet_version v%{dist_version}_coreos.1
 # The Quay public key to trust
 %define registry_domain quay.io
 %define key_fingerprint bff313cdaa560b16a8987b8f72abf5f6799d33bc
@@ -114,8 +114,9 @@ install -pm 0664 quay-key \
 %doc INSTALL.md
 
 %changelog
-* Tue Sep 26 2017 David Michael <david.michael@coreos.com> - 1.7.5-1
+* Mon Oct 02 2017 David Michael <david.michael@coreos.com> - 1.7.5-1
 - Update to 1.7.5.
+- Bump the kubelet version to the security release.
 - Require at least rkt 1.28.1 (current latest).
 
 * Fri Sep 01 2017 David Michael <david.michael@coreos.com> - 1.7.3-1
