@@ -10,8 +10,8 @@
 %global import_path %{provider}.%{provider_tld}/%{project0}/%{repo0}
 
 # These values should match those built into this rkt version
-%global coreos_version 1235.0.0
-%global coreos_systemd_version 231
+%global coreos_version 1478.0.0
+%global coreos_systemd_version 233
 
 # Again... More things to support dyamically building a systemd stage1
 # outside of the verison of systemd packaged with Red Hat Enterprise Linux 7
@@ -26,8 +26,8 @@
 %global stage1_flavors coreos,fly,src
 
 Name:           %{repo0}
-Version:        1.28.1
-Release:        2%{?dist}
+Version:        1.29.0
+Release:        1%{?dist}
 Summary:        A pod-native container engine for Linux
 
 License:        ASL 2.0
@@ -40,7 +40,6 @@ ExclusiveArch:  x86_64 aarch64 %{arm} %{ix86}
 Source0:        %{git0}/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        %{git1}/archive/v%{systemd_version}/%{repo1}-%{systemd_version}.tar.gz
 Source2:        https://alpha.release.core-os.net/amd64-usr/%{coreos_version}/coreos_production_pxe_image.cpio.gz#/coreos-%{coreos_version}-amd64-usr.cpio.gz
-Patch0:         https://github.com/rkt/rkt/commit/1179771b093a668fef65beaa8c23bb7000430129.patch#/%{name}-%{version}-local-systemd.patch
 
 BuildRequires:  autoconf
 BuildRequires:  automake
@@ -93,7 +92,6 @@ in development.
 
 %prep
 %setup -q -n %{repo0}-%{version}
-%patch0 -p1
 
 %setup -q -T -D -a 1
 
@@ -171,6 +169,7 @@ exit 0
 %doc %{_mandir}/man1/rkt.1*
 %doc %{_mandir}/man1/rkt_api-service.1*
 %doc %{_mandir}/man1/rkt_cat-manifest.1*
+%doc %{_mandir}/man1/rkt_completion.1*
 %doc %{_mandir}/man1/rkt_config.1*
 %doc %{_mandir}/man1/rkt_enter.1*
 %doc %{_mandir}/man1/rkt_export.1*
@@ -229,6 +228,11 @@ exit 0
 %attr(0660,root,rkt) %{_sharedstatedir}/%{name}/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625
 
 %changelog
+* Wed Oct 04 2017 David Michael <david.michael@coreos.com> - 1.29.0-1
+- Update to 1.29.0.
+- Drop the systemd stage1 patch (applied upstream).
+- Bump the CoreOS image to 1478.0.0.
+
 * Fri Sep 01 2017 David Michael <david.michael@coreos.com> - 1.28.1-2
 - Fetch the systemd stage1 patch from upstream.
 
