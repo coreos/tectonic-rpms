@@ -40,6 +40,7 @@ ExclusiveArch:  x86_64 aarch64 %{arm} %{ix86}
 Source0:        %{git0}/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        %{git1}/archive/v%{systemd_version}/%{repo1}-%{systemd_version}.tar.gz
 Source2:        https://alpha.release.core-os.net/amd64-usr/%{coreos_version}/coreos_production_pxe_image.cpio.gz#/coreos-%{coreos_version}-amd64-usr.cpio.gz
+Patch0:         https://github.com/rkt/rkt/commit/ce936a91678b77a2b91440e0198c895519ca8b24.patch#/%{name}-%{version}-multiple-hosts-entry-host.patch
 
 BuildRequires:  autoconf
 BuildRequires:  automake
@@ -92,6 +93,7 @@ in development.
 
 %prep
 %setup -q -n %{repo0}-%{version}
+%patch0 -p1
 
 %setup -q -T -D -a 1
 
