@@ -1,6 +1,6 @@
-%define dist_version 1.7.5
+%define dist_version 1.7.9
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
-%define kubelet_version v%{dist_version}_coreos.1
+%define kubelet_version v%{dist_version}_coreos.0
 # The Quay public key to trust
 %define registry_domain quay.io
 %define key_fingerprint bff313cdaa560b16a8987b8f72abf5f6799d33bc
@@ -14,7 +14,7 @@ Group:          System Environment/Daemons
 License:        ASL 2.0
 URL:            https://coreos.com/tectonic
 
-Source0:        https://raw.githubusercontent.com/coreos/coreos-overlay/890d98bf42dee5c5878d636a7dc2d42b2c6a9977/app-admin/kubelet-wrapper/files/kubelet-wrapper#/coreos-1520.0.0-kubelet-wrapper
+Source0:        https://raw.githubusercontent.com/coreos/coreos-overlay/01d17abc65e905abffdbb12699742e94279ac3cc/app-admin/kubelet-wrapper/files/kubelet-wrapper#/coreos-1576.0.0-kubelet-wrapper
 Source1:        kubelet.path
 Source2:        kubelet.service
 Source3:        wait-for-dns.service
