@@ -114,6 +114,10 @@ install -pm 0664 quay-key \
 %doc INSTALL.md
 
 %changelog
+* Tue Oct 24 2017 David Michael <david.michael@coreos.com> - 1.7.9-1
+- Update to 1.7.9.
+- Update kubelet-wrapper from CoreOS Container Linux 1576.0.0.
+
 * Mon Oct 02 2017 David Michael <david.michael@coreos.com> - 1.7.5-1
 - Update to 1.7.5.
 - Bump the kubelet version to the security release.
