@@ -27,7 +27,7 @@
 
 Name:           %{repo0}
 Version:        1.29.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A pod-native container engine for Linux
 
 License:        ASL 2.0
@@ -40,6 +40,7 @@ ExclusiveArch:  x86_64 aarch64 %{arm} %{ix86}
 Source0:        %{git0}/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        %{git1}/archive/v%{systemd_version}/%{repo1}-%{systemd_version}.tar.gz
 Source2:        https://alpha.release.core-os.net/amd64-usr/%{coreos_version}/coreos_production_pxe_image.cpio.gz#/coreos-%{coreos_version}-amd64-usr.cpio.gz
+Patch0:         https://github.com/rkt/rkt/commit/ce936a91678b77a2b91440e0198c895519ca8b24.patch#/%{name}-%{version}-multiple-hosts-entry-host.patch
 
 BuildRequires:  autoconf
 BuildRequires:  automake
@@ -92,6 +93,7 @@ in development.
 
 %prep
 %setup -q -n %{repo0}-%{version}
+%patch0 -p1
 
 %setup -q -T -D -a 1
 
@@ -228,6 +230,9 @@ exit 0
 %attr(0660,root,rkt) %{_sharedstatedir}/%{name}/cas/db/.34a8b4c1ad933745146fdbfef3073706ee571625
 
 %changelog
+* Tue Oct 24 2017 David Michael <david.michael@coreos.com> - 1.29.0-2
+- Apply a patch for less strict option parsing from upstream.
+
 * Wed Oct 04 2017 David Michael <david.michael@coreos.com> - 1.29.0-1
 - Update to 1.29.0.
 - Drop the systemd stage1 patch (applied upstream).
