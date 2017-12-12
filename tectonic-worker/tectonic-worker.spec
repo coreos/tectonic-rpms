@@ -1,4 +1,4 @@
-%define dist_version 1.7.9
+%define dist_version 1.8.4
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
 %define kubelet_version v%{dist_version}_coreos.0
 # The Quay public key to trust
@@ -114,6 +114,9 @@ install -pm 0664 quay-key \
 %doc INSTALL.md
 
 %changelog
+* Tue Dec 12 2017 David Michael <david.michael@coreos.com> - 1.8.4-1
+- Update to 1.8.4.
+
 * Tue Oct 24 2017 David Michael <david.michael@coreos.com> - 1.7.9-1
 - Update to 1.7.9.
 - Update kubelet-wrapper from CoreOS Container Linux 1576.0.0.
