@@ -1,4 +1,4 @@
-%define dist_version 1.8.4
+%define dist_version 1.8.7
 # Versions Tagged on Quay.io - https://quay.io/repository/coreos/hyperkube?tab=tags
 %define kubelet_version v%{dist_version}_coreos.0
 # The Quay public key to trust
@@ -114,6 +114,9 @@ install -pm 0664 quay-key \
 %doc INSTALL.md
 
 %changelog
+* Tue Jan 30 2018 David Michael <david.michael@coreos.com> - 1.8.7-1
+- Update to 1.8.7.
+
 * Tue Dec 12 2017 David Michael <david.michael@coreos.com> - 1.8.4-1
 - Update to 1.8.4.
 
